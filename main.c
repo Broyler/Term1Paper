@@ -1,5 +1,6 @@
 #define SDL_MAIN_HANDLED
 
+#include <math.h>
 #include <SDL.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -8,10 +9,17 @@
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
 const SDL_Color backgroundColor = {0x3b, 0x3e, 0x4f, 0xff};
+const SDL_Color triangleColors[3] = {
+	{0xff, 0, 0, 0xff},
+	{0, 0, 0xff, 0xff},
+	{0, 0xff, 0, 0xff}
+};
 
 bool run = true;
-double speed;
-double radius;
+double speed = 10;
+double radius = 100;
+double rotation;
+SDL_Vertex vertices[3];
 
 SDL_Window* InitSDL() {
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
@@ -25,6 +33,17 @@ SDL_Window* InitSDL() {
     	SCREEN_HEIGHT,
     	SDL_WINDOW_SHOWN
     );
+}
+
+void CalculateVertices() {
+	double angle, x, y;
+
+	for (int i = 0; i < 3; ++i) {
+		angle = rotation + i * (2 * M_PI / 3);
+		x = cos(angle) * radius + SCREEN_WIDTH / 2;
+		y = sin(angle) * radius + SCREEN_HEIGHT / 2;
+		vertices[i] = (SDL_Vertex){(SDL_FPoint){x, y}, triangleColors[i]};
+	}
 }
 
 void EventLoop(SDL_Event* e) {
@@ -41,6 +60,7 @@ void EventLoop(SDL_Event* e) {
 void Render(SDL_Renderer* renderer, const SDL_Color* bg) {
 	SDL_SetRenderDrawColor(renderer, bg->r, bg->g, bg->b, bg->a);
 	SDL_RenderClear(renderer);
+	SDL_RenderGeometry(renderer, NULL, vertices, 3, NULL, 0);
 	SDL_RenderPresent(renderer);
 }
 
@@ -61,6 +81,7 @@ int main(int argc, char* argv[]) {
 
     while (run) {
     	EventLoop(&e);
+    	CalculateVertices();
     	Render(renderer, &backgroundColor);
     }
     
