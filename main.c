@@ -11,6 +11,8 @@ typedef struct {
 	const double min;
 	const double max;
 	double* value;
+	SDL_Rect rect;
+	bool dragged;
 } Slider;
 
 bool run = true;
@@ -34,8 +36,10 @@ const int SLIDER_WIDTH = 5;
 const int HANDLE_WIDTH = 13;
 const SDL_Color SLIDER_COLOR = {0, 0, 0, 0xff};
 const SDL_Color HANDLE_COLOR = {0xff, 0xff, 0xff, 0xff};
-Slider radiusSlider = {1, 10, 250, &radius};
-Slider speedSlider = {2, -2 * M_PI, 2 * M_PI, &speed};
+const Slider radiusSlider = {1, 10, 200, &radius};
+const Slider speedSlider = {2, -2 * M_PI, 2 * M_PI, &speed};
+Slider sliders[] = {radiusSlider, speedSlider};
+const int slidersAmount = 2;
 
 SDL_Window* InitSDL() {
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
@@ -52,7 +56,23 @@ SDL_Window* InitSDL() {
     );
 }
 
+double Lerp(double x, double min, double max) {
+	if (x <= 0)
+		return min;
+
+	if (x >= 1)
+		return max;
+
+	return x * (max - min) + min;
+}
+
 double InverseLerp(double x, double min, double max) {
+	if (x <= min)
+		return 0;
+
+	if (x >= max)
+		return 1;
+
 	return (x - min) / (max - min);
 }
 
@@ -76,16 +96,12 @@ void RenderSliderBars(SDL_Renderer* renderer) {
 }
 
 void RenderHandle(SDL_Renderer* renderer, Slider* slider) {
-	double percentage = InverseLerp(*(slider->value), slider->min, slider->max);
+	double percentage = InverseLerp(*slider->value, slider->min, slider->max);
 	int x = percentage * (SCREEN_WIDTH - 2 * SLIDER_PADDING) + SLIDER_PADDING;
 	int y = SCREEN_HEIGHT - SLIDER_OFFSET * slider->index;
 	y -= (HANDLE_WIDTH - SLIDER_WIDTH) / 2;
-	SDL_RenderFillRect(renderer, &(SDL_Rect){
-		x,
-		y,
-		HANDLE_WIDTH,
-		HANDLE_WIDTH
-	});
+	slider->rect = (SDL_Rect){x, y, HANDLE_WIDTH, HANDLE_WIDTH};
+	SDL_RenderFillRect(renderer, &slider->rect);
 }
 
 void RenderSliderHandles(SDL_Renderer* renderer) {
@@ -96,8 +112,9 @@ void RenderSliderHandles(SDL_Renderer* renderer) {
 		HANDLE_COLOR.b,
 		HANDLE_COLOR.a
 	);
-	RenderHandle(renderer, &radiusSlider);
-	RenderHandle(renderer, &speedSlider);
+	for (int i = 0; i < slidersAmount; ++i) {
+		RenderHandle(renderer, &sliders[i]);
+	}
 }
 
 void RenderSliders(SDL_Renderer* renderer) {
@@ -116,12 +133,47 @@ void CalculateVertices() {
 	}
 }
 
+void MouseDown(SDL_MouseButtonEvent e) {
+	for (int i = 0; i < slidersAmount; ++i) {
+		if (SDL_PointInRect(&(SDL_Point){e.x, e.y}, &sliders[i].rect))
+			sliders[i].dragged = true;
+	}
+}
+
+void MouseUp(SDL_MouseButtonEvent e) {
+	for (int i = 0; i < slidersAmount; ++i) {
+		if (sliders[i].dragged)
+			sliders[i].dragged = false;
+	}
+}
+
+void UpdateSliderValues(SDL_MouseMotionEvent e) {
+	for (int i = 0; i < slidersAmount; ++i) {
+		if (sliders[i].dragged) {
+			double progress = InverseLerp(e.x, SLIDER_PADDING, SCREEN_WIDTH - SLIDER_PADDING);
+			*sliders[i].value = Lerp(progress, sliders[i].min, sliders[i].max);
+		}
+	}
+}
+
 void EventLoop(SDL_Event* e) {
     while(SDL_PollEvent(e) != 0)
     {
     	switch (e->type) {
     	case SDL_QUIT:
     		run = false;
+    		break;
+
+    	case SDL_MOUSEBUTTONDOWN:
+    		MouseDown(e->button);
+    		break;
+
+    	case SDL_MOUSEBUTTONUP:
+    		MouseUp(e->button);
+    		break;
+
+    	case SDL_MOUSEMOTION:
+    		UpdateSliderValues(e->motion);
     		break;
     	}
 	}
