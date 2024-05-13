@@ -16,15 +16,17 @@ const SDL_Color triangleColors[3] = {
 };
 
 bool run = true;
-double speed = 10;
+double speed = M_PI / 2;  // Обороты в секунду
 double radius = 100;
 double rotation;
+uint64_t frequency;
 SDL_Vertex vertices[3];
 
 SDL_Window* InitSDL() {
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 		return NULL;
 
+	frequency = SDL_GetPerformanceFrequency();
     return SDL_CreateWindow(
     	"Курсовая работа №1",
     	SDL_WINDOWPOS_CENTERED,
@@ -64,6 +66,13 @@ void Render(SDL_Renderer* renderer, const SDL_Color* bg) {
 	SDL_RenderPresent(renderer);
 }
 
+void AddRotation(uint64_t* lastTick) {
+	uint64_t now = SDL_GetPerformanceCounter();
+	double delta = (double)(now - *lastTick) / frequency;
+	*lastTick = now;
+    rotation += speed * delta;
+}
+
 int main(int argc, char* argv[]) {
     SDL_Window* window = InitSDL();
     SDL_Renderer* renderer = SDL_CreateRenderer(
@@ -78,10 +87,12 @@ int main(int argc, char* argv[]) {
     }
 
     SDL_Event e;
+    uint64_t lastTick = SDL_GetPerformanceCounter();
 
     while (run) {
     	EventLoop(&e);
     	CalculateVertices();
+    	AddRotation(&lastTick);
     	Render(renderer, &backgroundColor);
     }
     
