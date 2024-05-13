@@ -2,6 +2,7 @@
 
 #include <math.h>
 #include <SDL.h>
+#include <SDL_ttf.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -14,6 +15,15 @@ typedef struct {
 	SDL_Rect rect;
 	bool dragged;
 } Slider;
+
+typedef struct {
+	const char* text;
+	const int x;
+	const int y;
+	SDL_Color color;
+	SDL_Texture* texture;
+	SDL_Rect rect;
+} Text;
 
 bool run = true;
 double speed = M_PI / 2;  // Обороты в секунду
@@ -33,18 +43,30 @@ const SDL_Color TRIANGLE_COLORS[3] = {
 const int SLIDER_PADDING = 150;
 const int SLIDER_OFFSET = 50;
 const int SLIDER_WIDTH = 5;
-const int HANDLE_WIDTH = 13;
-const SDL_Color SLIDER_COLOR = {0, 0, 0, 0xff};
+const int HANDLE_WIDTH = 16;
+const SDL_Color SLIDER_COLOR = {0x16, 0x16, 0x16, 0xff};
 const SDL_Color HANDLE_COLOR = {0xff, 0xff, 0xff, 0xff};
 const Slider radiusSlider = {1, 10, 200, &radius};
 const Slider speedSlider = {2, -2 * M_PI, 2 * M_PI, &speed};
 Slider sliders[] = {radiusSlider, speedSlider};
 const int slidersAmount = 2;
 
+TTF_Font* font;
+Text texts[] = {
+	{"Курсовая работа №1, вар. 3.23", SCREEN_WIDTH / 2, 50, (SDL_Color){0xff, 0xff, 0xff, 0xff}},
+	{"Радиус", SCREEN_WIDTH / 2, SCREEN_HEIGHT - 25, (SDL_Color){0xff, 0xff, 0xff, 0xff}},
+	{"Скорость вращения", SCREEN_WIDTH / 2, SCREEN_HEIGHT - 75, (SDL_Color){0xff, 0xff, 0xff, 0xff}}
+};
+int textsAmount = 3;
+
 SDL_Window* InitSDL() {
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 		return NULL;
 
+	if (TTF_Init() == -1)
+		return NULL;
+
+	font = TTF_OpenFont("font.ttf", 24);
 	frequency = SDL_GetPerformanceFrequency();
     return SDL_CreateWindow(
     	"Курсовая работа №1",
@@ -156,6 +178,24 @@ void UpdateSliderValues(SDL_MouseMotionEvent e) {
 	}
 }
 
+void CreateFontTextures(SDL_Renderer* renderer) {
+	for (int i = 0; i < textsAmount; ++i) {
+		SDL_Surface* text = TTF_RenderUTF8_Solid(font, texts[i].text, texts[i].color);
+		SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, text);
+		texts[i].texture = texture;
+		int w, h;
+		SDL_QueryTexture(texture, NULL, NULL, &w, &h);
+		SDL_Rect rect = {texts[i].x - w / 2, texts[i].y - h / 2, w, h};
+		texts[i].rect = rect;
+	}
+}
+
+void RenderTexts(SDL_Renderer* renderer) {
+	for (int i = 0; i < textsAmount; ++i) {
+		SDL_RenderCopy(renderer, texts[i].texture, NULL, &texts[i].rect);
+	}
+}
+
 void EventLoop(SDL_Event* e) {
     while(SDL_PollEvent(e) != 0)
     {
@@ -189,6 +229,7 @@ void Render(SDL_Renderer* renderer) {
 	);
 	SDL_RenderClear(renderer);
 	SDL_RenderGeometry(renderer, NULL, vertices, 3, NULL, 0);
+	RenderTexts(renderer);
 	RenderSliders(renderer);
 	SDL_RenderPresent(renderer);
 }
@@ -207,6 +248,7 @@ int main(int argc, char* argv[]) {
     	-1,
     	SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
     );
+    CreateFontTextures(renderer);
     
     if (window == NULL || renderer == NULL) {
     	printf("SDL error: %s\n", SDL_GetError());
