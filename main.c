@@ -1,10 +1,10 @@
 #define SDL_MAIN_HANDLED
 
-#include <math.h>
-#include <SDL2/SDL.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdio.h>
+#include "math.h"
+#include "SDL2/SDL.h"
+#include "stdbool.h"
+#include "stdint.h"
+#include "stdio.h"
 #include "texts.h"
 #include "sliders.h"
 #include "inputs.h"
