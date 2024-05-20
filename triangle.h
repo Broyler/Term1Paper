@@ -1,4 +1,4 @@
-double speed = M_PI / 2;  // Обороты в секунду
+double speed = M_PI / 2;  // Радианы в секунду
 double radius = 100;
 double rotation;
 SDL_Vertex vertices[3];
