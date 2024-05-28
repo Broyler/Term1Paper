@@ -1,0 +1,2087 @@
+\documentclass[14pt]{extarticle}
+\usepackage[a4paper, left=30mm, right=10mm, bottom=20mm, top=20mm]{geometry}
+\usepackage{graphicx}
+\usepackage{mwe}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\usepackage{ragged2e}
+\usepackage{enumitem}
+\usepackage{tocloft}
+\usepackage{hyperref}
+\usepackage{lipsum}
+\usepackage{setspace}
+\usepackage{titlesec}
+\usepackage{gensymb}
+\usepackage{amsmath}
+\usepackage{tikz}
+\usepackage{listings}
+\usepackage{xcolor}
+\usetikzlibrary{shapes, arrows}
+\usetikzlibrary{positioning}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\small,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2,
+    emph={bool, uint64_t},
+    emphstyle={\color{magenta}},
+    language=C,
+    extendedchars=\true
+}
+
+\lstset{style=mystyle}
+
+\newcommand\myheight{0.9ex} % cup and cap height
+\newcommand\mywidth {1.2ex} % cup and cap width
+\newcommand\mylinew {0.1ex} % cup and cap line width
+\newcommand\spaceba {0.4ex} % space before and after
+
+\long\def\mnode#1#2#3{
+    \node [process, below = 0.75 cm of #1] (#2) {
+    \begin{tabular}
+    \centering
+    #3
+    \end{tabular}
+    };
+    \path [connector] (#1) -- (#2);
+};
+
+\newcommand{\mycup}
+{
+  \hspace{\spaceba}
+  \tikz[line width=\mylinew,line cap=round]
+    \draw (0,\myheight) -- (0,0.5*\mywidth) arc (-180:0:0.5*\mywidth) -- (\mywidth,\myheight);
+  \hspace{\spaceba}
+}
+%\newcommand{\mycup}{\mysymbol{0}}
+
+\setlength{\parindent}{1.25cm}
+\setlength{\RaggedRightParindent}{1.25cm}
+
+\tolerance=1
+\emergencystretch=\maxdimen
+\hyphenpenalty=10000
+\hbadness=10000
+
+\titleformat{\section}[block]
+  {\centering\large\bfseries} % format
+  {}                                % label
+  {0pt}                             % label separation
+  {}                                % before-code
+  []                                % after-code
+
+\titleformat{\subsection}[block]
+  {\bfseries} % format
+  {}                                % label
+  {0pt}                             % label separation
+  {\hspace{1.25cm}}                % before-code
+  []                                % after-code
+
+\hypersetup{
+    linktocpage,
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=black,
+    linktoc=all
+}
+
+\addto\captionsrussian{
+  \renewcommand{\contentsname}
+    {СОДЕРЖАНИЕ}%
+}
+
+\makeatletter
+\newcommand{\termtitle}{{\centering
+	\includegraphics[width=0.15\textwidth]{mirea_logo.png}\par\vspace{1cm}
+    \vspace{-0.7cm}
+	{МИНОБРНАУКИ РОССИИ\par}
+	\vspace{0.3cm}
+	{Федеральное государственное бюджетное образовательное учреждение высшего образования\par}
+	\vspace{0.1cm}
+	{\textbf{<<МИРЭА - Российский технологический университет>>}\par}
+ \vspace{0.1cm}
+ {\textbf{РТУ МИРЭА}\par}
+ \vspace{0.1cm}
+ {Институт искусственного интеллекта\par}
+ {Кафедра проблем управления\par}}}
+
+\makeatother
+
+\renewcommand{\cfttoctitlefont}{\hfill}
+\renewcommand{\cftaftertoctitle}{\hfill\hfill}
+
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+
+\tikzstyle{terminator} = [rectangle, draw, text centered, rounded corners, minimum height=2em]
+\tikzstyle{process} = [rectangle, draw, text centered, minimum height=2em]
+\tikzstyle{link} = [circle, draw, text centered, minimum height=2em]
+\tikzstyle{decision} = [diamond, draw, text centered, minimum height=2em]
+\tikzstyle{data}=[trapezium, draw, text centered, trapezium left angle=60, trapezium right angle=120, minimum height=2em]
+\tikzstyle{connector} = [draw, -latex']
+
+\makeatletter
+\newcommand{\rubybot}[2]{%
+  \begin{tabular}[t]{@{}c@{}}
+    #2\\[-6.7pt]
+    \fontsize{1}{1}
+    \setlength{\normalbaselineskip}{0pt}\footnotesize#1
+  \end{tabular}%
+}
+\makeatother
+
+\begin{document}
+\thispagestyle{empty}{
+ \termtitle
+ \vspace{1.75cm}
+ \centering
+ {\textbf{КУРСОВАЯ РАБОТА}\par}
+ \vspace{0.2cm}
+ {по дисциплине \textbf{Основы программирования систем управления}\par}
+ \vspace{1.75cm}
+ {\raggedright
+ {\textbf{Тема курсовой работы:} <<Реализация программы вращения равностороннего треугольника>>.\par}
+ \vspace{1.5cm}
+ {\textbf{Студент группы КВБО-07-23:} Николин А. А.}{\hfill\rule{3cm}{.5pt}\par}
+ \vspace{0.6cm}
+ {\textbf{Руководитель курсовой работы:} ст. преп. Смирнов М. Ю.}{\hfill\rule{3cm}{.5pt}\par}
+ \vspace{2cm}
+ {Работа представлена к защите:{\hfill
+ <<\rule{0.75cm}{.5pt}>>
+ \rule{2.5cm}{.5pt}
+ 2024 г.
+ \par}}
+ \vspace{0.6cm}
+ {Допущен к защите:{\hfill
+ <<\rule{0.75cm}{.5pt}>>
+ \rule{2.5cm}{.5pt}
+ 2024 г.
+ \par}}
+ \vspace*{\fill}
+ }
+ {\centering{Москва 2024}\par}
+\vfill
+}
+\clearpage
+{ % page 2
+    \termtitle
+    \vspace{0.5cm}
+    {   
+        \centering
+        {\textbf{ЗАДАНИЕ}\par}
+        \vspace{0.1cm}
+        {\textbf{на выполнение курсовой работы} по дисциплине\par}
+        {<<Основы программирования систем управления>>}\par
+    }
+    \vspace{0.3cm}
+    {
+        \raggedleft
+        Утверждаю\par
+        \vspace{0.3cm}
+        Заведующий кафедрой ПУ\par
+        \rubybot{Подпись}{\rule{3.5cm}{0.5pt}} Романов М. П.\par
+        <<\rule{0.75cm}{.5pt}>>
+         \rule{2.5cm}{.5pt}
+         2024 г.
+    }
+    \par
+    \vspace{0.3cm}
+    \raggedright
+    Студент: Николин А. А. Группа: КВБО-07-23\par
+    \textbf{Тема:} <<Реализация программы вращения равностороннего треугольника>>\par
+    \textbf{Исходные данные:}\par
+    \begin{enumerate}[itemsep=2pt, parsep=0pt, topsep=3pt]
+        \item{Вращение равностороннего треугольника}
+        \item{Изменение скорости вращения треугольника}
+        \item{Изменение размеров треугольника}
+    \end{enumerate}\par
+    \textbf{Перечень вопросов, подлежащих обработке, и обязательного графического материала:}\par
+    \begin{enumerate}[itemsep=2pt, parsep=0pt, topsep=1pt]
+        \item{Использование компьютерной графики}
+        \item{Вращение геометрической фигуры}
+        \item{Блок-схема алгоритма работы программы}
+    \end{enumerate}\par
+    \textbf{Срок представления к защите курсовой работы: }
+    до <<\rule{0.6cm}{.5pt}>>
+         \rule{1cm}{.5pt}
+         2024 г.\par
+    \vspace{0.3cm}
+    \textbf{Задание на курсовую работу выдал} \hfill \rule{3.75cm}{.5pt}\hfill{Смирнов М. Ю.}\par
+    \raggedleft
+    <<\rule{0.75cm}{.5pt}>>
+         \rule{2.5cm}{.5pt}
+         2024 г.\par
+    \raggedright
+    \vspace{0.3cm}
+    \textbf{Задание на курсовую работу получил} \hfill \rule{3.5cm}{.5pt}\hfillНиколин А. А.\par
+    \vfill
+    \newpage
+}
+{ % page 3
+    \begin{spacing}{1}
+    \tableofcontents
+    \end{spacing}
+    \par
+    \vfill
+    \newpage
+}
+{ % page 4
+    \begin{spacing}{1.5}
+    {
+        \phantomsection
+        \addcontentsline{toc}{section}{ВВЕДЕНИЕ}
+        \centering\section*{ВВЕДЕНИЕ}
+        \par
+    }
+    На языке программирования \textit{C} была разработана программа, которая выводит на экран вращающийся равносторонний треугольник. В программе реализована возможность изменения скорости вращения треугольника, а также его размеров. Управление параметрами скорости вращения и размеров треугольника реализовано с помощью пользовательского интерфейса в виде ползунков, которыми можно управлять мышкой.\par
+    \vspace{1em}
+    {
+        \phantomsection
+        \addcontentsline{toc}{subsection}{Поставленная задача}
+        \subsection*{Поставленная задача}
+        \par
+    }
+    Цель работы: целью работы является создание программы на языке программирования \textit{C/C++}, способной отображать на экране вращающийся вокруг своего центра равносторонний треугольник, а также предоставляющей возможность изменения скорости вращения треугольника и его размеров во время работы программы.
+    \par
+    Для упрощения процесса разработки были выделены основные подзадачи:\par
+    \begin{enumerate}[itemsep=2pt, parsep=0pt, topsep=2pt]
+        \item{Подключить библиотеку с графикой.}
+        \item{Инициализировать программу, открыть графическое окно.}
+        \item{Отобразить треугольник на экране.}
+        \item{Реализовать вращение треугольника.}
+        \item{Создать интерфейс для изменения параметров.}
+    \end{enumerate}
+    \par
+    {
+        \phantomsection
+        \addcontentsline{toc}{subsection}{Предмет и объект исследования}
+        \subsection*{Предмет и объект исследования}
+        \par
+    }
+    В данной работе выделен объект исследования - разработка компьютерных программ с графическим интерфейсом и пользовательским управлением на языках \textit{C/C++}. Предмет исследования - язык программирования \textit{C} и графическая библиотека \textit{SDL2}.
+    Объект исследования включает в себя программное обеспечение, разрабатываемое в работе. Дополнительно, выделенный объект разработки также включает в себя алгоритмы для отрисовки равностороннего треугольника на экране, выбора точек для его построения, формулы для преобразования точек с течением времени, что реализует вращение. Объект исследования также включает в себя создание пользовательского интерфейса. В ходе работы были использованы математические формулы, как, например, перевод координат из \textit{полярных} в \textit{декартовые}, формула \textit{линейной интерполяции}, формула \textit{минимально-максимальной нормализации} и другие, что будет рассмотрено подробнее в ходе работы.
+    \vfill
+    \newpage
+    \end{spacing}
+}
+{% page 5
+    \begin{spacing}{1.5}
+    {
+        \centering\section{ТЕОРЕТИЧЕСКАЯ ЧАСТЬ}
+        \par
+    }
+    В ходе работы пришлось применить различные формулы, используя их в алгоритме для отображения треугольника на экране. Важно понимать, как работают все формулы, использованные в программе, для создания программы без ошибок.
+    \par
+    {
+        \vspace{1em}
+        \subsection{Выбор точек для построения треугольника}
+        \label{sec:trianglepoints}
+        \par
+    } 
+    В ходе работы алгоритм отображения треугольника на экране будет описан подробнее, но пока что, стоит учесть лишь то, что для построения треугольника нужны 3 точки в \textit{декартовой системе координат} - вершины треугольника.Необходимо найти такие 3 точки, которые образуют равносторонний треугольник. Учитывая поставленную задачу, а именно вращение треугольника, было принято решение использовать выбор равноудаленных друг от друга точек на окружности для построения равностороннего треугольника. Необходимо найти 3 точки на окружности, такие что дуги между соседними точками равны 120\degree. Можно записать данное выражение как:
+    \par
+    \vspace{1em}
+    \begin{center}
+    $
+        \forall \odot O \; \exists A, B, C \in \odot O \; : \lvert\mycup{AB}\rvert = \lvert\mycup{BC}\rvert = \lvert\mycup{CA}\rvert = 120^\circ
+    $
+    \end{center}
+    \par
+    Существует бесконечное множество наборов таких точек, однако, если считать, что одна из точек на окружности определена заранее, то существует ровно один набор таких точек, если не учитывать порядок точек. Докажем данное утверждение: пусть задана точка $A$, причем полярный угол точки $A = \phi(A)$. Тогда, по утверждению выше,
+    \[
+        \begin{array}{c}
+        \lvert\mycup{AB}\rvert = 120\degree = \frac{2\pi}{3} \implies \phi(B) = \phi(A) + \frac{2\pi}{3} \\
+        \lvert\mycup{BC}\rvert = 120\degree = \frac{2\pi}{3} \implies \phi(C) = \phi(B) + \frac{2\pi}{3} = \phi(A) + \frac{4\pi}{3}
+        \end{array}
+    \]
+    С изменением $\phi(A)$, полученные наборы точек образуют треугольник, повернутый на $\phi(A)$.
+    {
+        \par
+        \subsection{Переход от полярной системы координат к декартовой}
+        \label{sec:polar}
+        \par
+    }
+    Отображение треугольника производится по 3 точкам, нахождение которых определено в разделе \hyperref[sec:trianglepoints]\textif{<<Выбор точек для построения треугольника>>}. Исходя из данного раздела, вершины треугольника заданы точками $A, B, C$ в декартовых координатах. Однако, имеются лишь формулы для полярного представления этих точек: $\phi(A), \phi(B), \phi(C)$. В таком случае нам необходимо воспользоваться формулами для перехода из полярной системы координат в декартовую:
+    \[
+        \begin{array}{c}
+            x = rcos(\phi) + x_0 \\
+            y = rsin(\phi) + y_0
+        \end{array}
+    \]
+    где $x_0$, $y_0$ - точка центра окружности вращения, $r$ - радиус окружности вращения. Окружность вращения будет описанной окружностью для равностороннего треугольника. Используя эти формулы в работе вычисляются координаты вершин треугольника.
+    {
+        \par
+        \vspace{1em}
+        \subsection{Линейная интерполяция}
+        \label{sec:lerp}
+        \par
+    }
+    Для установки значения скорости вращения (далее - $\omega$), а также размеров треугольника, а именно радиуса описанной вокруг него окружности (далее - $r$), необходимо воспользоваться формулой линейной интерполяции. Такая формула имеет 3 параметра: $x_{min}$, $x_{max}$, $x_p$, где $x_{min}$ - минимальное значение функции, $x_{max}$ - максимальное значение функции, $x_t$ - степень интерполяции на отрезке $[0; 1]$. Задача функции заключается в том, чтобы найти значение $x$, которому соответствует значение функции при данной степени интерполяции $x_t$, так $x = x_{min}$ при $x_t=0$ и $x = x_{max}$ при $x_t=1$. Так выглядит формула линейной интерполяции для данной программы:
+    \[
+    Lerp(x_{min}, x_{max}, x_t) = x_t * (x_{max} - x_{min}) + x_{min}
+    \]
+    % В ходе работы, программа будет вычислять значение ползунка для параметров программы как число на отрезке $[0; 1]$. Так, для управления значением скорости вращения $\omega$, при некоторых значениях $\omega_{min}$ и $\omega_{max}$ и известном от ползунка значении $\omega_t$ текущее значение скорости вращения $\omega$ вычисляется как:\par \begin{center}$\omega(\omega_t) = Lerp(\omega_{min}, \omega_{max}, \omega_t)$\end{center}\par
+    % Вычисление радиуса описанной вокруг равностороннего треугольника окружности вычисляется аналогично, при известных значениях $r_{min}, r_{max}$ и значении $r_t$, известном от ползунка его управления, вычисляется как:\par
+    % \begin{center}
+    %     $r(r_t) = Lerp(r_{min}, r_{max}, r_t)$
+    % \end{center}
+    % }
+    {
+        \par
+        \subsection{Минимально-максимальная нормализация}
+        \label{sec:minmaxnorm}
+        \par
+    }
+    Функция минимально-максимальной нормализации противоположна по смыслу функции
+    \hyperref[sec:lerp]{\textif{линейной интерполяции}}. Данная функция принимает 3 параметра: $x_{min}, x_{max}, x$ - минимальное значение функции, $x_{max}$ - максимальное значение функции, $x$ - текущее значение функции на отрезке $[x_{min}; x_{max}]$. Задача функции заключается в том, чтобы найти степень интерполяции $x_t$, которому соответствует текущее значение функции $x$, так $x_t = 0$ при $x = x_{min}$ и $x_t = 1$ при $x = x_{max}$. Так выглядит функция минимально-максимальной нормализации для данной программы:\par\vspace{1em}
+    \begin{center}
+        $MinMaxNorm(x_{min}, x_{max}, x) = \frac{x - x_{min}}{x_{max} - x_{min}}$
+    \end{center}
+    Данная формула будет использована в программе для определения значений ползунков на отрезке $[0; 1]$. Таким образом, ползунок в крайнем левом положении должен приводить к значению $0$, а в крайнем правом $1$.
+    \par
+
+    {
+        \par
+        \subsection{Устранение зависимости от частоты кадров}
+        \label{sec:fps}
+        \par
+    }
+    
+    В ходе работы задается вращение равностороннего треугольника, путем добавления в каждой итерации программы к углу поворота треугольника $\phi$ какого-то значения $\Delta\phi$, зависящего от скорости $\omega$. Однако, если такое значение $\Delta\phi(\omega) = const$, то при увеличении частоты кадров в $\lambda$ в $\alpha$ раз, скорость вращения треугольника пропорционально увеличится в $\alpha$ раз. Такое поведение программы является нежеланным, ведь разные пользователи будут наблюдать различную скорость вращения.
+    Чтобы устранить данный недостаток, необходимо умножать скорость вращения $\omega$ на значение в секундах с момента прошлой итерации, $\Delta{t}$. Стоит заметить, что, $\lambda \approx \frac{1}{\Delta{t}}$. В таком случае скорость вращения вычисляется как \[ \lim_{\lambda\to+\infty} \sum_{i=1}^{\lambda} \omega * \frac{1}{\lambda} = \lim_{\lambda\to+\infty} \sum_{i=1}^{\lambda} \omega * \Delta{t} = \]
+    \[ \lim_{\lambda\to+\infty} \omega * \Delta{t} * \lambda = \lim_{\lambda\to+\infty} \omega * \frac{1}{\lambda} * \lambda = \lim_{\lambda\to+\infty} \omega = \omega \]
+    Использование такого метода вычисления скорости вращения $\omega$ гарантирует ее одинаковость вне зависимости от количества кадров в секунду $\lambda$.
+    \par
+
+    {
+        \par
+        \subsection{Использованные библиотеки}
+        \par
+    }
+
+    В ходе работы были использованы как встроенные, так и сторонние библиотеки. Так, например, из встроенных библиотек использованы:
+    \par
+    \begin{enumerate}[itemsep=2pt, parsep=0pt, topsep=3pt]
+        \item{math.h - для работы с математическими функциями, как $cos$, $sin$.}
+        \item{stdbool.h - для использования булевой переменной (true/false)}
+        \item{stdint.h - для использования других целочисленных типов}
+    \end{enumerate}
+    \par
+    Была использована сторонняя библиотека \textit{SDL.h} для работы с графическим окном, отображения графики, обработки нажатий, и библиотека \textit{SDL\_ttf.h} для отображения текста. Данную библиотеку можно установить из официальных источников, в списке использованной литературы будет приложена ссылка на репозиторий данной библиотеки на \textit{GitHub}, откуда ее можно загрузить.
+    \par
+    \vfill
+    \newpage
+    \end{spacing}
+}
+{
+    {
+        \par
+        \centering\section{ХОД РАБОТЫ}
+        \par
+    }
+    {
+        \par
+        \subsection{Создание графического окна}
+        \label{sec:init}
+        \par
+    }
+    \begin{spacing}{1.5}
+        Для начала необходимо подключить все используемые в программе библиотеки.
+    \end{spacing}
+    \par
+    \begin{lstlisting}
+#include "math.h"
+#include "SDL2/SDL.h"
+#include "stdbool.h"
+#include "stdint.h"
+#include "stdio.h"\end{lstlisting}
+    \par
+    \begin{spacing}{1.5}
+    Для удобства процесса разработки, а также простоты чтения кода другими людьми, было принято решение разбить программу на подпрограммы, каждая из которых находится в отдельном заголовочном файле и отвечает за определенные функции. Подключаются эти заголовочные файлы:
+    \end{spacing}
+    \par
+    \begin{lstlisting}
+#include "texts.h"
+#include "sliders.h"
+#include "inputs.h"\end{lstlisting}
+    \begin{spacing}{1.5}
+        Далее рассмотрен заголовочный файл \verb|constants.h|, в котором находятся необходимые константы, как, например, ширина и высота окна, цвет заднего фона окна и другие.
+    \end{spacing}
+    \begin{lstlisting}
+// constants.h
+const int SCREEN_WIDTH = 800;
+const int SCREEN_HEIGHT = 600;
+const SDL_Color BACKGROUND_COLOR = {0x3b, 0x3e, 0x4f, 0xff};
+const SDL_Color TRIANGLE_COLORS[3] = {
+	{0xff, 0, 0, 0xff},
+	{0, 0, 0xff, 0xff},
+	{0, 0xff, 0, 0xff}
+};\end{lstlisting}
+    \begin{spacing}{1.5}
+    Далее необходимо определить директиву \verb|SDL_MAIN_HANDLED| для корректной работы программы. Это важно сделать \textit{до} подключения библиотеки \textit{SDL2}.\par
+    \end{spacing}
+    \begin{lstlisting}
+// main.c
+#define SDL_MAIN_HANDLED\end{lstlisting}
+    \par
+    \begin{spacing}{1.5}
+        Необходимо инициализировать глобальные переменные, смысл которых будет оговорен далее в ходе работы.
+    \end{spacing}
+    \par
+    \begin{lstlisting}
+// main.c
+bool run = true;
+uint64_t frequency, lastTick;\end{lstlisting}
+    \par
+    \begin{spacing}{1.5}
+        Создается функция \verb|InitSDL|, которая отвечает за инициализацию графической библиотеки \textit{SDL2}, библиотеки для отображения текста \textit{SDL\_ttf}, открытие шрифта и установку переменной \verb|frequency|, хранящей значение частоты счетчика, который будет использоваться для получения времени, прошедшего с прошлой итерации программы $\Delta{t}$ в соответствии с главой \hyperref[sec:fps]{<<Устранение зависимости от частоты кадров>>}.
+    \end{spacing}
+    \begin{lstlisting}
+// main.c
+SDL_Window* InitSDL() {
+	if (SDL_Init(SDL_INIT_VIDEO) < 0)
+		return NULL;
+
+	if (TTF_Init() == -1)
+		return NULL;
+
+	font = TTF_OpenFont("font.ttf", 24);
+	frequency = SDL_GetPerformanceFrequency();
+
+    return SDL_CreateWindow(
+    	"Курсовая работа №1",
+    	SDL_WINDOWPOS_CENTERED,
+    	SDL_WINDOWPOS_CENTERED,
+    	SCREEN_WIDTH,
+    	SCREEN_HEIGHT,
+    	SDL_WINDOW_SHOWN
+    );
+}\end{lstlisting}
+    \par
+
+    \begin{spacing}{1.5}
+        Функция \verb|SDL_Init(SDL_INIT_VIDEO)| инициализирует библиотеку \textit{SDL2} и настраивает ее на работу в видео-режиме, что не подключает модули для работы со звуком и другие ненужные функции. Функция \verb|TTF_Init| инициализирует библиотеку \textit{SDL\_ttf} для работы с текстом и шрифтами формата \textit{ttf}. Открывается заранее загруженный в директорию с программой шрифт с помощью \verb|TTF_OpenFont("font.ttf", 24)|, где \verb|24| - размер шрифта.
+        Задается частота счетчика \verb|frequency|. \verb|SDL_CreateWindow| создает окно программы, где \verb|Курсовая работа №1| - заголовок окна. Следующие 2 аргумента определяют изначальное положение окна на экране, в данном случае окно открывается по центру с помощью \verb|SDL_WINDOWPOS_CENTERED|. Следующие 2 аргумента отвечают за ширину и высоту окна, это константы \verb|SCREEN_WIDTH| и \verb|SCREEN_HEIGHT| заданные заранее.
+        Ниже представлена блок схема функции InitSDL.
+        \par
+
+        \begin{center}
+    \begin{tikzpicture}[transform shape, scale=0.7]
+    \node [terminator] at (0, 0) (start) {Начало};
+    \node [decision, inner sep=-2ex] at (0, -3.85) (sdlcond) {
+    \begin{tabular}
+    \centering
+        \verb|SDL_Init(| \\ \verb|SDL_INIT_VIDEO| \\ \verb|) < 0|
+    \end{tabular}
+    };
+    \node [process] at (8.4, -3.85) (sdlcondfail) {
+    \begin{tabular}
+    \centering
+        Если инициализация \textit{SDL}\\
+        Завершилась неудачей (код меньше 0)\\
+        Возвращается \verb|NULL|\\
+        \verb|return NULL|
+    \end{tabular}
+    }
+
+    \path [connector] (start) -- (sdlcond);
+    \path [connector] (sdlcond) -- (sdlcondfail);
+    \node [draw=none] at (3, -3.5) (sdlcondyes) {
+        Да
+    }
+
+    \node [decision, inner sep=-0.5ex] at (0, -9.5) (ttfcond) {
+    \begin{tabular}
+    \centering
+        \verb|TTF_Init()| \\ \verb| == -1|
+    \end{tabular}
+    };
+
+    \path [connector] (sdlcond) -- (ttfcond);
+    \node [draw=none] at (0.6, -6.8) (sdlcondno) {Нет};
+
+    \node [process] at (8.4, -9.5) (ttfcondfail) {
+       \begin{tabular}
+    \centering
+        Если инициализация \textit{SDL\_ttf}\\
+        Завершилась неудачей (код -1)\\
+        Возвращается \verb|NULL|\\
+        \verb|return NULL|
+        \end{tabular} 
+    };
+
+    \path [connector] (ttfcond) -- (ttfcondfail);
+    \node [draw=none] at (3.3, -9.1) (ttfcondyes) {Да};
+
+    \node [process] at (0, -14.3) (loadfont) {
+        \begin{tabular}
+        \centering
+        Загрузить шрифт 24 кегля\\
+        из файла \verb|font.ttf| в переменную \verb|font|\\
+        \verb|font = TTF_OpenFont("font.ttf", 24)|
+        \end{tabular}
+    };
+
+    \node [draw=none] at (0.6, -12.1) (ttfcondno) {Нет};
+    \path [connector] (ttfcond) -- (loadfont);
+
+    \node [process] at (0, -18.4) (savefreq) {
+    \begin{tabular}
+    \centering
+    Сохранить частоту счетчика времени\\
+    В переменную \verb|frequency|\\
+    \verb|frequency = SDL_GetPerformanceFrequency()|
+    \end{tabular}
+    }
+
+    \node [process] at (0, -23.4) (retwin) {
+    \begin{tabular}
+    \centering
+    Создать окно \textit{SDL} по центру экрана с заданным размером\\ и заголовком окна \textit{"Курсовая работа №1"}\\
+    \verb|SDL_CreateWindow("Курсовая работа №1", SDL_WINDOWPOS_CENTERED, |\\\verb|SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH,|\\\verb|SCREEN_HEIGHT, SDL_WINDOW_SHOWN)|
+    \end{tabular}
+    };
+
+    \node [terminator] at (0, -27.3) (end) {Конец};
+
+    \path [connector] (retwin) -- (end);
+    \path [connector] (savefreq) -- (retwin);
+    
+
+    \path [connector] (loadfont) -- (savefreq);
+    
+    \end{tikzpicture}
+    \end{center}
+
+        %\vspace{24em}
+        \par
+        Далее задается функция для отрисовки всех графических элементов и отображения их на экране. Некоторые функции объявлены в других файлах и будут описаны позже.
+        \end{spacing}
+        \begin{lstlisting}
+// main.c
+void Render(SDL_Renderer* renderer) {
+	SetRenderColor(renderer, &BACKGROUND_COLOR);
+	SDL_RenderClear(renderer);
+	SDL_RenderGeometry(renderer, NULL, vertices, 3, NULL, 0);
+	RenderTexts(renderer);
+	RenderSliders(renderer);
+	SDL_RenderPresent(renderer);
+}\end{lstlisting}
+    \par
+    Ниже представлена блок-схема для функции \verb|Render|.
+    \par
+    \begin{center}
+    \begin{tikzpicture}[transform shape, scale=0.7]
+    \node [terminator] at (0, 0) (start) {Начало};
+    \node [terminator] at (0, -15.5) (end) {Конец};
+    \node [process] at (0, -2) (setcolor) {
+    \begin{tabular}{\centering}
+         Установка цвета отрисовки на цвет \verb|BACKGROUND_COLOR| \\
+         \verb|SetRenderColor(renderer, &BACKGROUND_COLOR)|
+    \end{tabular}
+    };
+    \node [process] at (0, -4.3) (renderclear) {
+    \begin{tabular}{\centering}
+         Очистка окна отрисовщика, заливка выбранным цветом \\
+         \verb|SDL_RenderClear(renderer)|
+    \end{tabular}
+    };
+    \node [process] at (0, -6.6) (rendergeom) {
+    \begin{tabular}{\centering}
+         Отрисовка треугольника на экране по \verb|3| вершинам \verb|vertices| \\
+         \verb|SDL_RenderGeometry(renderer, NULL, vertices, 3, NULL, 0)|
+    \end{tabular}
+    };
+    \node [process] at (0, -9) (rendertexts) {
+    \begin{tabular}{\centering}
+         Отрисовка текста текста на экране \\
+         \verb|RenderTexts(renderer)|
+    \end{tabular}
+    };
+    \node [process] at (0, -11.3) (rendersliders) {
+    \begin{tabular}{\centering}
+         Отрисовка ползунков управления на экране \\
+         \verb|RenderSliders(renderer)|
+    \end{tabular}
+    };
+    \node [process] at (0, -13.6) (renderpresent) {
+    \begin{tabular}{\centering}
+         Отображение всех отрисованных элементов на экране \\
+         \verb|SDL_RenderPresent(renderer)|
+    \end{tabular}
+    };
+    \path [connector] (start) -- (setcolor);
+    \path [connector] (setcolor) -- (renderclear);
+    \path [connector] (renderclear) -- (rendergeom);
+    \path [connector] (rendergeom) -- (rendertexts);
+    \path [connector] (rendertexts) -- (rendersliders);
+    \path [connector] (rendersliders) -- (renderpresent);
+    \path [connector] (renderpresent) -- (end);
+
+    
+    \end{tikzpicture}
+    \end{center}
+    
+    \begin{spacing}{1.5}
+        \verb|SetRenderColor| - функция, которая устанавливает текущий цвет на заранее выбранный цвет заднего фона программы \verb|BACKGROUND_COLOR|, эта функция рассмотрена в разделе <<\hyperref[sec:setcolor]{Вращение треугольника}>>, а \verb|SDL_RenderClear| очищает ранее отрисованные элементы и заливает окно текущим выбранным цветом. \verb|SDL_RenderGeometry| - функция для отрисовки любой геометрической фигуры по набору вершин. В качестве одного из аргументов передается массив типа \verb|SDL_Vertex[]|, который содержит все вершины фигуры, а также число, количество вершин. В этом случае отрисовывается треугольник, поэтому в качестве аргумента передается \verb|3| как число вершин. Также вызываются собственные функции для отрисовки текста и ползунков управления. После этого происходит отображение отрисованных элементов на экране с помощью функции \verb|SDL_RenderPresent|.
+        \par
+        Далее рассматривается функция \verb|main|, с которой начинается работа программы.
+    \end{spacing}
+
+    \begin{lstlisting}
+int main(int argc, char* argv[]) {
+    SDL_Window* window = InitSDL();
+    SDL_Renderer* renderer = SDL_CreateRenderer(
+    	window,
+    	-1,
+    	SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
+    );
+    
+    if (window == NULL || renderer == NULL) {
+    	printf("SDL error: %s\n", SDL_GetError());
+    	return 1;
+    }
+
+    CreateFontTextures(renderer);
+
+    SDL_Event e;
+    lastTick = SDL_GetPerformanceCounter();
+
+    while (run) {
+    	EventLoop(&e);
+    	CalculateVertices();
+    	AddRotation(&lastTick);
+    	Render(renderer);
+    }
+    
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+
+	return 0;
+} \end{lstlisting}
+    \par
+
+    \begin{spacing}{1.5}
+        \noindent
+        Далее представлена блок схема функции \verb|main|.
+    \end{spacing}
+
+    \begin{center}
+        \begin{tikzpicture}[transform shape, scale=0.8]
+            \node[terminator] at (0, 0) (start) {Начало};
+            \mnode{start}{wininit}{
+                Инициализация окна\\
+                \texttt{window = InitSDL()}
+            }
+            \mnode{wininit}{rendinit}{
+                Создание отрисовщика \texttt{renderer}\\
+                \texttt{renderer = SDL\_CreateRenderer(window, -1,} \\
+                \texttt{
+                    SDL\_RENDERER\_ACCELERATED | SDL\_RENDERER\_PRESENTVSYNC)
+                }
+            }
+            \node[decision, inner sep=-0.3ex, below=0.75cm of rendinit] (initcond) {
+                \begin{tabular}
+                \centering
+                    \verb|window == NULL|\\
+                    ИЛИ\\
+                    \verb|renderer == NULL|
+                \end{tabular}
+            };
+            \path[connector] (rendinit) -- (initcond);
+            \node[process, right = 1.5cm of initcond] (initerr) {
+                Вывод сообщения об ошибке
+            }
+            \node [draw=none, above right = -1.5cm and 1.6cm of initcond] (initcondyes) {Да};
+            \path [connector] (initcond) -- (initerr);
+            \node [terminator, below=0.75cm of initerr] (enderr) {Конец};
+            \path [connector] (initerr) -- (enderr);
+            \mnode{initcond}{crfonts}{
+                Создание текстур текстов\\
+                \texttt{CreateFontTextures(renderer)}
+            }
+            \mnode{crfonts}{sdleinit}{
+                Объявление переменной для обработки событий\\
+                \texttt{SDL\_Event e}
+            }
+            \mnode{sdleinit}{setlt}{
+                Установка переменной счетчика $t_p$ \texttt{lastTick}\\
+                \texttt{lastTick = SDL\_GetPerformanceCounter()}
+            }
+            \node[draw=none, below right = 1.4cm and -1.3cm of initcond] (initcondno) {Нет};
+            \node[decision, below = 0.75cm of setlt] (runcond) {
+                run
+            }
+            \path[connector] (setlt) -- (runcond);
+            \node[process, right=3cm of runcond] (destr) {
+                \begin{tabular}
+                \centering
+                Закрытие окна \textit{SDL}\\
+                \texttt{SDL\_DestroyWindow(window)}
+                \end{tabular}
+            }
+            \path[connector] (runcond) -- (destr);
+            \node[process, below=0.75cm of destr] (sdlquit) {
+                \begin{tabular}
+                \centering
+                Завершение работы \textit{SDL}\\
+                \texttt{SDL\_Quit()}
+                \end{tabular}
+            }
+            \path[connector] (destr) -- (sdlquit);
+            \node[terminator, below=0.75cm of sdlquit](end2){Конец};
+            \path[connector] (sdlquit) -- (end2);
+            \node[draw=none, above right = -0.3cm and 0.4cm of runcond] {Нет};
+
+            \node[process, below=1.3cm of runcond] (eventloop) {
+                \begin{tabular}
+                \centering
+                Обработка событий\\
+                \texttt{EventLoop(\&e)}
+                \end{tabular}
+            };
+            \mnode{eventloop}{calcvert}{
+                Вычисление вершин треугольника\\
+                \texttt{CalculateVertices()}
+            };
+            \mnode{calcvert}{addrot}{
+                Добавление угла вращения $\Delta\phi(t)$\\
+                \texttt{AddRotation(\&lastTick)}
+            };
+            \mnode{addrot}{render}{
+                Отображение всех элементов на экране\\
+                \texttt{Render(renderer)}
+            };
+            \node[link, right=1.5cm of render] (link1) {1};
+            \path[connector] (render) -- (link1);
+            \path[connector] (runcond) -- (eventloop);
+            \node[draw=none, below right = 0.5cm and -0.3cm of runcond]{Да};
+            \node[link, left=1.5cm of runcond] (link2) {1};
+            \path[connector] (link2) -- (runcond);
+            
+        \end{tikzpicture}
+    \end{center}
+    
+    \begin{spacing}{1.5}
+        Используются заданные ранее функции для инициализации окна, также создается переменная-отрисовщик \verb|renderer|, куда передаются флаги \verb|SDL_RENDERER_ACCELERATED|, который сообщает программе, при возможности, использовать аппаратное ускорение, а также флаг \verb|SDL_RENDERER_PRESENTVSYNC|, задающий режим \textit{вертикальной синхронизации} для окна, что ограничит частоту кадров до текущей частоты обновления экрана компьютера. Таким образом, не будет потрачено лишних ресурсов компьютера на создание кадров, которые не увидит пользователь.
+        \par
+        При ошибке в процессе инициализации программа выведет информацию об ошибке в консоль и завершит работу. Далее вызывается функция \verb|CreateFontTextures|, которая создаст текстуры с текстом, данная функция описана в разделе \hyperref[sec:createfonts]{<<Отображение текста>>}. Создается переменная типа \verb|SDL_Event|, в которую будет записываться информация о событиях программы, таких как действия пользоваля, нажатия кнопок мыши. Задается переменная \verb|lastTick|, в которой будет храниться значение счетчика в прошлой итерации программы, изначально заданная как текущее значение счетчика, которое можно получить с помощью функции \verb|SDL_GetPerformanceCounter|. \parДалее запускается основной цикл программы. Сначала запускается обработчик событий с помощью функции \verb|EventLoop|, которая описана в разделе \hyperref[sec:eventloop]{<<Обработка событий>>}. Происходит вычисление вершин треугольника на данный момент, с помощью функции \verb|CalculateVertices|, которая описана в разделе \hyperref[sec:calcverts]{<<Вращение треугольника>>}. Увеличивается текущий угол поворота треугольника относительно первой вершины, $\phi(A)$ с помощью метода \verb|AddRotation|, который описан в разделе \hyperref[sec:addrotation]{<<Вращение треугольника>>}. Последним вызовом в теле цикла является функция отрисовки на экране \verb|Render|, описанная в данном разделе ранее. При завершении цикла необходимо закрыть окно с помощью \verb|SDL_DestroyWindow| и запускить функцию, производящую завершение работы подсистем \textit{SDL2}, \verb|SDL_Quit|.
+    \end{spacing}
+    {
+        \par
+        \subsection{Вращение треугольника}
+        \label{sec:triangle}
+        \par
+    }
+    \begin{spacing}{1.5}
+        В заголовочном файле \verb|triangle.h| находятся основные переменные, отвечающие за треугольник, в том числе скорость вращения треугольника, измеряющаяся в радианах в секунду, радиус описанной около треугольника окружности, текущее значение угла поворота первой вершины $\phi(A)$, а также массив типа \verb|SDL_Vertex[]|, содержащий информацию о вершинах треугольника, а именно их положение на экране в \textit{декартовой системе координат} и цвет вершины.
+    \end{spacing}
+
+    \begin{lstlisting}
+// triangle.h
+double speed = M_PI / 2; // Радианы в секунду
+double radius = 100;
+double rotation;
+SDL_Vertex vertices[3];\end{lstlisting}
+
+    \label{sec:setcolor}
+    \begin{spacing}{1.5}
+        Также, для удобства была создана функция \verb|SetRenderColor|, устанавливающая цвет отрисовщика на экране на необходимый цвет, передаваемый как \verb|SDL_Color|. 
+    \end{spacing}
+
+    \begin{lstlisting}
+// triangle.h
+void SetRenderColor(SDL_Renderer* renderer, const SDL_Color* color) {
+	SDL_SetRenderDrawColor(
+		renderer,
+		color->r,
+		color->g,
+		color->b,
+		color->a
+	);
+}\end{lstlisting}
+
+    \par
+    
+    \begin{spacing}{1.5}
+        Далее рассмотрен заголовочный файл \verb|calculations.h|, в котором находятся функции для необходимых вычислений в программе. Для начала необходимо подключить заголовочный файл \verb|triangle.h|, описанный в данном разделе выше. Задается переменная счетчика, которая используется в соответствии с разделом \hyperref[sec:init]{<<Создание графического окна>>}.
+    \end{spacing}
+
+    \begin{lstlisting}
+// calculations.h
+#include "triangle.h"
+
+extern uint64_t frequency;\end{lstlisting}
+
+    \begin{spacing}{1.5}
+        Создается функция \verb|Lerp| для \textit{линейной интерполяции}, которая описана в разделе \hyperref[sec:lerp]{<<Линейная интерполяция>>}.
+    \end{spacing}
+
+    \begin{lstlisting}
+// calculations.h
+double Lerp(double x, double min, double max) {
+	if (x <= 0)
+		return min;
+
+	if (x >= 1)
+		return max;
+
+	return x * (max - min) + min;
+}\end{lstlisting}
+
+    \begin{spacing}{1.5}
+        Единственным отличием данной функции от той, заданной формулой в разделе \hyperref[sec:lerp]{<<Линейная интерполяция>>}, это дополнительные условия проверки на $x_t$, не находящийся на отрезке $[0; 1]$, в случае чего возвращается соответственно либо минимальное, либо максимальное значение.
+        \par
+        Далее рассмотрена функция \verb|InverseLerp|, реализующая формулу из раздела \hyperref[sec:minmaxnorm]{<<Минимально-максимальная нормализация>>}.
+    \end{spacing}
+
+
+    \begin{lstlisting}
+// calculations.h
+double InverseLerp(double x, double min, double max) {
+	if (x <= min)
+		return 0;
+
+	if (x >= max)
+		return 1;
+
+	return (x - min) / (max - min);
+}\end{lstlisting}
+
+    \begin{spacing}{1.5}
+        Как и в функции \textit{линейной интерполяции}, отличием является дополнение формулы, описанной в разделе \hyperref[sec:minmaxnorm]{<<минимально-максимальная нормализация>>}, проверками на $x$. В случае, если он меньше $x_{min}$, возвращается 0, а если больше $x_{max}$, возвращается 1.
+        \par
+        \label{sec:calcverts}
+        Далее рассмотрена функция \verb|CalculateVerticies| для нахождения \textit{полярного} угла $\phi$ для каждой точки $A, B, C$, а также преобразования их в \textit{декартову систему координат.}
+    \end{spacing}
+
+    \begin{lstlisting}
+// calculations.h
+void CalculateVertices() {
+	double angle, x, y;
+
+	for (int i = 0; i < 3; ++i) {
+		angle = rotation + i * (2 * M_PI / 3);
+		x = cos(angle) * radius + SCREEN_WIDTH / 2;
+		y = sin(angle) * radius + SCREEN_HEIGHT / 2;
+		vertices[i] = (SDL_Vertex){(SDL_FPoint){x, y}, TRIANGLE_COLORS[i]};
+	}
+}\end{lstlisting}
+    {
+        Ниже представлена блок-схема алгоритма функции \verb|CalculateVertices|.
+    }
+    \begin{center}
+    \begin{tikzpicture}[transform shape, scale=0.8]
+    \node [terminator] at (0,0) (start) {Начало};
+    \node [process] at (0,-2) (initvar) {\begin{tabular}{\centering}
+    Инициализация переменных для угла $\phi$ \\
+ каждой из вершин, $x$ и $y$ их декартовых координат\end{tabular}};
+    \node [process] at (0, -4) (initi) {Инициализация переменной \textit{i} для цикла};
+    \path [connector] (start) -- (initvar);
+    \path [connector] (initvar) -- (initi);
+    \node [decision] at (0, -6) (forcond) {
+        i < 3
+    };
+    \node [terminator] at (4, -6) (progend) {Конец};
+    \node[draw=none] at (1.50, -5.6) (no) {Нет};
+    \node[draw=none] at (0.80, -7.1) (yes) {Да};
+    \path [connector] (forcond) -- (progend);
+    \path [connector] (initi) -- (forcond);
+    \node [process] at (0, -8.25) (anglecalc) {
+    \begin{tabular}{\centering}
+         Вычисление угла $\phi$ для текущей вершины по формуле \\
+         $\phi(i) = \phi(A) + \frac{2\pi{i}}{3}$
+    \end{tabular}
+    };
+    \node [process] at (0, -10.7) (polartodecart) {
+    \begin{tabular}{\centering}
+         Переход к полярным координатам \\
+         $x(i) = rcos(\phi(i)) + x_0$ \\ 
+         $y(i) = rsin(\phi(i)) + y_0$
+    \end{tabular}
+    };
+    \node [process] at (0, -13.1) (setvertices) {
+    \begin{tabular}{\centering}
+         Установка вершин треугольника \\
+         \verb|vertices[i] = {(SDL_FPoint){x, y}, TRIANGLE_COLORS[i]}|
+    \end{tabular}
+    };
+    \path [connector] (forcond) -- (anglecalc);
+    \path [connector] (anglecalc) -- (polartodecart);
+    \path [connector] (polartodecart) -- (setvertices);
+    \node [link] at (-2.5, -6) (restartloop) {1};
+    \path [connector] (restartloop) -- (forcond);
+    \mnode{setvertices}{ipl}{\texttt{i = i + 1}}
+    \node[link, below = 0.75cm of ipl](lnk1){1};
+    \path[connector] (ipl) -- (lnk1);
+    \end{tikzpicture}
+    \end{center}
+    \begin{spacing}{1.5}
+        Сначала находится \textit{полярный} угол каждой точки, пусть каждая вершина $A, B, C$ имеет свой индекс $k$, начиная с $0$. Так, \textit{полярный} угол вершин можно записать как $\phi(k) = \phi(A) + 2\pi{}rk$, где $r$ - радиус описанной около равностороннего треугольника окружности. Имея \textit{полярный} угол вершин треугольника, его можно перевести в \textit{декартову систему координат} по формулам, описанным в разделе \hyperref[sec:polar]{<<Переход от полярной системы координат к декартовой>>}. Задается каждая из вершин массива с вершинами \verb|vertices|, используя полученные координаты, а также цвет вершины из заголовочного файла с константами \verb|constants.h|.
+        \par
+        \label{sec:addrotation}
+        Далее рассмотрена функция \verb|AddRotation| для добавления необходимого угла $\Delta\phi$ к углу $\phi(A)$ за одну итерацию программы.
+    \end{spacing}
+
+    \begin{lstlisting}
+void AddRotation(uint64_t* lastTick) {
+  uint64_t now = SDL_GetPerformanceCounter();
+  double delta = (double)(now - *lastTick) / frequency;
+  *lastTick = now;
+  rotation += speed * delta;
+}\end{lstlisting}
+
+    \begin{spacing}{1.5}
+        \noindent
+        Ниже представлена блок схема функции \verb|AddRotation|.
+    \end{spacing}
+
+    \vspace{-0.2em}
+    \begin{center}
+    \begin{tikzpicture}[transform shape, scale=0.7]
+
+    \node [terminator] at (0, 0) (start) {Начало};
+    \node [process, below = 0.75cm of start] (getnow) {
+    \begin{tabular}
+    \centering
+    Запись в переменную \verb|now| текущего значения счетчика времени\\
+    \verb|now = SDL_GetPerformanceCounter()|
+    \end{tabular}
+    };
+
+    \node [process, below = 0.75cm of getnow] (getdelta) {
+    \begin{tabular}
+    \centering
+    Вычисление $\Delta(t)$\\
+    \verb|delta = (now - *lastTick) / frequency)|\\
+    где \verb|*lastTick| - указатель на значение счетчика в прошлую\\
+    итерацию цикла, $t_p$.
+    \end{tabular}
+    }
+
+    \node [process, below = 0.75cm of getdelta] (updtp) {
+    \begin{tabular}
+    \centering
+    Обновление значения указателя \verb|*lastTick| на актуальное $t$\\
+    \verb|*lastTick = now|
+    \end{tabular}
+    }
+
+    \node [process, below = 0.75 cm of updtp] (addrot) {
+    \begin{tabular}
+    \centering
+    Добавление угла поворота $\Delta\phi(t)$\\
+    \verb|rotation += speed * delta|
+    \end{tabular}
+    }
+
+    \node [terminator, below = 0.75 cm of addrot] (end) {Конец};
+
+    \path [connector] (start) -- (getnow);
+    \path [connector] (getnow) -- (getdelta);
+    \path [connector] (getdelta) -- (updtp);
+    \path [connector] (updtp) -- (addrot);
+    \path [connector] (addrot) -- (end);
+    
+    \end{tikzpicture}
+    \end{center}
+    
+
+    \begin{spacing}{1.5}
+        Сначала получается значение счетчика и записывается в переменную \verb|now|, пусть это будет $t$. Если $t_p$ - значение счетчика в предыдущую итерацию программу, а $\gamma$ - частота счетчика, хранимая в переменной \verb|frequency|, то $\Delta{t}$, время между итерациями программы, вычисляется по формуле:
+        \[
+            \Delta{t} = \frac{t - t_p}{\gamma}
+        \]
+        Вычислив $\Delta{t}$, увеличивается текущий полярный угол поворота точки $A$ $\phi(A)$ на $v * \Delta{t}$, где $v$ - заданная в заголовочном файле \verb|constants.h| константа - скорость вращения, измеряемая в радианах в секунду. Вычисления в этом разделе ссылаются на формулы и расчеты из раздела \hyperref[sec:fps]{<<Устранение зависимости от частоты кадров>>}. Ниже представлена блок схема функции \verb|AddRotation|.
+    \end{spacing}
+
+    {
+        \par
+        \subsection{Отображение ползунков}
+        \label{sec:sliders}
+        \par
+    }
+
+    Для начала необходимо подключить заголовочный файл с расчетами \verb|sliders.h|.
+    \begin{lstlisting}
+// sliders.h
+#include "calculations.h"\end{lstlisting}
+    \par
+    \begin{spacing}{1.5}
+        Далее определены константы отрисовки ползунков, такие как их ширина, цвет и отступы.
+    \end{spacing}
+
+    \begin{lstlisting}
+// sliders.h
+const int SLIDER_PADDING = 150;
+const int SLIDER_OFFSET = 50;
+const int SLIDER_WIDTH = 5;
+const int HANDLE_WIDTH = 16;
+const SDL_Color SLIDER_COLOR = {0x16, 0x16, 0x16, 0xff};
+const SDL_Color HANDLE_COLOR = {0xff, 0xff, 0xff, 0xff};
+const int slidersAmount = 2;\end{lstlisting}
+
+    \begin{spacing}{1.5}
+        Для удобства была создана структура \verb|Slider|, в которой находятся все специфичные для ползунка данные.
+    \end{spacing}
+
+    \begin{lstlisting}
+// sliders.h
+typedef struct {
+	const int index;
+	const double min;
+	const double max;
+	double* value;
+	SDL_Rect rect;
+	bool dragged;
+} Slider;\end{lstlisting}
+
+    \begin{spacing}{1.5}
+        Далее созданы переменные типа структуры \verb|Slider|, а также создан массив \verb|sliders[]|, в который занесены оба ползунка.
+    \end{spacing}
+
+    \begin{lstlisting}
+// sliders.h
+const Slider radiusSlider = {1, 10, 200, &radius};
+const Slider speedSlider = {2, -2 * M_PI, 2 * M_PI, &speed};
+Slider sliders[] = {radiusSlider, speedSlider};\end{lstlisting}
+
+    \begin{spacing}{1.5}
+        Для начала определена функция \verb|RenderSliderBars|, которая отрисовывает основную часть ползунков, их рабочий диапазон.
+    \end{spacing}
+
+    \begin{lstlisting}
+// sliders.h
+void RenderSliderBars(SDL_Renderer* renderer) {
+	SetRenderColor(renderer, &SLIDER_COLOR);
+
+	for (int i = 1; i < 3; ++i) {
+		SDL_RenderFillRect(renderer, &(SDL_Rect){
+			SLIDER_PADDING,
+			SCREEN_HEIGHT - SLIDER_OFFSET * i,
+			SCREEN_WIDTH - 2 * SLIDER_PADDING,
+			SLIDER_WIDTH
+		});
+	}
+}\end{lstlisting}
+
+    \begin{spacing}{1.5}
+        \noindent
+        Ниже представлена блок схема функции \verb|RenderSliderBars|.
+    \end{spacing}
+
+    \vspace{-1.25em};
+
+    \begin{center}
+    \begin{tikzpicture}[transform shape, scale=0.7]
+
+        \node [terminator] at (0, 0) (start) {Начало};
+        \mnode{start}{setcolor}{
+        Установка цвета на цвет ползунка\\
+        \texttt{SetRenderColor(renderer, \&SLIDER\_COLOR)}
+        };
+        \mnode{setcolor}{seti}{
+        Инициализация переменной \texttt{i} для цикла\\
+        \texttt{i = 1}
+        };
+        \node [decision, below = 0.75cm of seti] (forcond) {i < 3};
+        \path [connector] (seti) -- (forcond);
+        \node [terminator, right = 1.5cm of forcond] (end) {Конец};
+        \path [connector] (forcond) -- (end);
+        \node [draw=none, above right = -0.4cm and 0.6cm of forcond] (forcondno) {Нет};
+        \mnode{forcond}{fillrect}{
+            Отрисовка прямоугольника для \textit{i} ползунка.\\
+            \texttt{
+                SDL\_RenderFillRect(renderer, \&(SDL\_Rect){\{\\
+                    SLIDER\_PADDING,\\
+                    SCREEN\_HEIGHT - SLIDER\_OFFSET * i,\\
+                    SCREEN\_WIDTH - 2 * SLIDER\_PADDING,\\
+                    SLIDER\_WIDTH\}})
+                }
+        };
+        
+        \mnode{fillrect}{ipl}{\texttt{i = i + 1}}
+        \node [link, below = 0.75cm of ipl] (forjmp) {1};
+        \path [connector] (ipl) -- (forjmp);
+        \node [link, left = 1cm of forcond] (forjmp2) {1};
+        \path [connector] (forjmp2) -- (forcond);
+        
+        
+    \end{tikzpicture}
+    \end{center}
+    
+    \begin{spacing}{1.5}
+        Данная функция выполняет отрисовку прямоугольников для всего количества ползунков. Имеется 2 ползунка, поэтому происходит отрисовка двух ползунков. Используются ранее определенные константы, каждый ползунок располагается немного выше другого на экране.
+        \par
+        Далее рассмотрена функция \verb|RenderHandle|, отрисовывающая ручку управления ползунком на экране в зависимости от значения, которым управляет ползунок.
+    \end{spacing}
+
+    \begin{lstlisting}
+// sliders.h
+void RenderHandle(SDL_Renderer* renderer, Slider* slider) {
+	double percentage = InverseLerp(*slider->value, slider->min, slider->max);
+	int x = percentage * (SCREEN_WIDTH - 2 * SLIDER_PADDING) + SLIDER_PADDING;
+	int y = SCREEN_HEIGHT - SLIDER_OFFSET * slider->index;
+	y -= (HANDLE_WIDTH - SLIDER_WIDTH) / 2;
+	slider->rect = (SDL_Rect){x, y, HANDLE_WIDTH, HANDLE_WIDTH};
+	SDL_RenderFillRect(renderer, &slider->rect);
+}\end{lstlisting}
+
+    \begin{spacing}{1.5}
+        \noindent
+        Ниже представлена блок схема функции \verb|RenderHandle|.
+    \end{spacing}
+
+    \begin{center}
+        \begin{tikzpicture}[transform shape, scale=0.7]
+            \node[terminator] at (0, 0) (start) {Начало};
+            \mnode{start}{calcperc}{
+                Вычисление состояния значения ползунка\\
+                \texttt{percentage = InverseLerp(}\\
+                \texttt{*slider->value, slider-> min, slider->max)}
+            };
+            \mnode{calcperc}{calcx}{
+                Вычисление $x$ координаты ручки ползунка\\
+                \texttt{x = percentage * (SCREEN\_WIDTH}\\
+                \texttt{ - 2 * SLIDER\_PADDING) + SLIDER\_PADDING}
+            }
+            \mnode{calcx}{calcy}{
+                Вычисление $y$ координаты ручки ползунка\\
+                \texttt{y = SCREEN\_HEIGHT - SLIDER\_OFFSET * slider->index}\\
+                \texttt{y -= (HANDLE\_WIDTH - SLIDER\_WIDTH) / 2};
+            }
+            \mnode{calcy}{setrect}{
+                Установка области прямоугольника ручки ползунка\\
+                \texttt{slider->rect = (SDL\_RECT){\{x, y, HANDLE\_WIDTH, HANDLE\_WIDTH\}}}
+            }
+            \mnode{setrect}{fillrect}{
+                Отрисовка прямоугольника ручки ползунка на экране\\
+                \texttt{SDL\_RenderFillRect(renderer, \&slider->rect)}
+            }
+            \node[terminator, below=0.75cm of fillrect](end){Конец};
+            \path[connector] (fillrect) -- (end);
+        \end{tikzpicture}
+    \end{center}
+    \vspace{-0.5em}
+
+    \begin{spacing}{1.5}
+        Сначала вычисляется нормализованное значение ползунка с помощью фукцнии, описанной в разделе \hyperref[sec:minmaxnorm]{<<Минимально-максимальная нормализация>>}. Далее вычисляется положение ручки на экране по оси $x$, путем умножения ширины ползунка на его нормализованное значение и добавления отступа слева. Затем вычисляется значение ручки по оси $y$ на основе индекса ползунка, как оно вычислялось при отрисовке ползунков. Затем из положения ручки по оси $y$ вычитается $\frac{w_h - w_s}{2}$, где $w_h$ - ширина ручки, заданная константой \verb|HANDLE_WIDTH|, а $w_s$ - ширина ползунка, заданная константой \verb|SLIDER_WIDTH|. Это необходимо для того, чтобы ручка была визуально центрирована относительно ползунка по высоте. Затем создается прямоугольник \verb|SDL_Rect| и устанавливается на поле \verb|rect| данного ползунка. После этого вызывается функция отрисовки прямоугольника \verb|SDL_RenderFillRect|, куда передаются данные о созданном прямоугольнике.
+        \par
+        Далее рассмотрена функция \verb|RenderSliderHandles|, созданная для удобства отрисовки ручек управления ползунками.
+    \end{spacing}
+
+    \begin{lstlisting}
+// sliders.h
+void RenderSliderHandles(SDL_Renderer* renderer) {
+	SetRenderColor(renderer, &HANDLE_COLOR);
+	
+	for (int i = 0; i < slidersAmount; ++i) {
+		RenderHandle(renderer, &sliders[i]);
+	}
+}\end{lstlisting}
+
+    \begin{spacing}{1.5}
+        \noindent
+        Ниже представлена блок схема функции \verb|RenderSliderHandles|.
+    \end{spacing}
+
+    \vspace{-0.5em}
+
+    \begin{center}
+        \begin{tikzpicture}[transform shape, scale=0.7]
+            \node[terminator] at (0, 0) (start) {Начало};
+            \mnode{start}{setcol}{
+                Установка цвета отрисовки ручек ползунков\\
+                \texttt{SetRenderColor(renderer, \&HANDLE\_COLOR)}
+            };
+            \mnode{setcol}{initi}{
+                Объявление переменной-счетчика для цикла $i$.\\
+                \texttt{i = 0}
+            };
+            \node[decision, below=0.75cm of initi] (forcond) {
+                \texttt{i < slidersAmount}
+            };
+            \path[connector] (initi) -- (forcond);
+            \mnode{forcond}{render}{
+                Отрисовка ручки ползунка\\
+                \texttt{RenderHandle(renderer, \&sliders[i])}
+            };
+            \mnode{render}{ipl}{\texttt{i = i + 1}};
+            \node[link, below=0.75cm of ipl] (lnk1) {1};
+            \path [connector] (ipl) -- (lnk1);
+            \node[link, left=1.5cm of forcond] (lnk2) {1};
+            \path [connector] (lnk2) -- (forcond);
+            \node[terminator, right=1.5cm of forcond] (end) {Конец};
+            \path [connector] (forcond) -- (end);
+            \node[draw=none, above right = -1.2cm and 1.3cm of forcond]{Нет};
+        \end{tikzpicture}
+    \end{center}
+
+    \begin{spacing}{1.5}
+        Изначально устанавливается цвет отрисовки ручек по заданной константе \verb|HANDLE_COLOR| с помощью описанной ранее в разделе \hyperref[sec:setcolor]{<<Вращение треугольника>>} функции \verb|SetRenderColor|. Затем, для каждого ползунка происходит вызов описанной ранее функции \verb|RenderHandle| для отрисовки его ручки.
+        \par
+        Также, создана функция \verb|RenderSliders|, которая вызывает все необходимые функции отрисовки, то есть отрисовку ползунков и отрисовку ручек.
+    \end{spacing}
+
+    \begin{lstlisting}
+// sliders.h
+void RenderSliders(SDL_Renderer* renderer) {
+	RenderSliderBars(renderer);
+	RenderSliderHandles(renderer);
+}\end{lstlisting}
+
+    \begin{spacing}{1.5}
+        \noindent
+        Ниже представлена блок схема функции \verb|RenderSliders|.
+    \end{spacing}
+
+    \vspace{-0.5em}
+    \begin{center}
+    \begin{tikzpicture}[transform shape, scale=0.7]
+        \node [terminator] at (0, 0) (start) {Начало};
+        \mnode{start}{ffnc}{
+            Отрисовка ползунков\\
+            \texttt{RenderSliderBars(renderer)}
+        }
+        \mnode{ffnc}{sfnc}{
+            Отрисовка ручек для ползунков\\
+            \texttt{RenderSliderHandles(renderer)}
+        }
+        \node [terminator, below = 0.75cm of sfnc] (end) {Конец};
+        \path [connector] (sfnc) -- (end);
+    \end{tikzpicture}
+    \end{center}
+
+    \par
+
+    {
+        \par
+        \subsection{Обработка событий}
+        \label{sec:events}
+        \par
+    }
+
+    \begin{spacing}{1.5}
+        \par
+        Для обработки события завершения работы программы необходимо хранить состояние работы программы. Эта переменная обновляется при закрытии пользователем программы и уверяет благополучное завершение программы.
+    \end{spacing}
+
+    \begin{lstlisting}
+// inputs.h
+extern bool run;\end{lstlisting}
+
+    \begin{spacing}{1.5}
+        Была создана функция \verb|MouseDown|, отвечающая за события при нажатии на кнопку мыши.
+    \end{spacing}
+
+    \begin{lstlisting}
+// inputs.h
+void MouseDown(SDL_MouseButtonEvent e) {
+	for (int i = 0; i < slidersAmount; ++i) {
+		if (SDL_PointInRect(&(SDL_Point){e.x, e.y}, &sliders[i].rect))
+			sliders[i].dragged = true;
+	}
+}\end{lstlisting}
+
+    \begin{spacing}{1.5}
+        \noindent
+        Ниже представлена блок схема функции \verb|MouseDown|.
+    \end{spacing}
+
+    \begin{center}
+        \begin{tikzpicture}[transform shape, scale=0.7]
+            \node[terminator] at (0, 0) (start) {Начало};
+            \mnode{start}{initi}{
+                Объявление переменной для счетчика\\
+                \texttt{i = 0}
+            };
+            \node[decision, below=0.75 of initi] (forcond) {
+                \texttt{i < slidersAmount}
+            };
+            \path[connector] (initi) -- (forcond);
+            \node[draw=none, above right = -1.2cm and 1.3cm of forcond]{Нет};
+            \node[terminator, right=1.5cm of forcond] (end) {Конец};
+            \path[connector] (forcond) -- (end);
+            \node[draw=none, below right = 1.2cm and -1.2cm of forcond]{Да};
+            \mnode{forcond}{check}{
+                Проверка на нахождение точки $e$ в области \texttt{\&sliders[i].rect}\\
+                \texttt{SDL\_PointInRect(\&(SDL\_Point){\{e.x, e.y\}}, \&sliders[i].rect)}
+            };
+            \node[decision, below=0.75cm of check] (if) {
+                \begin{tabular}
+                \centering
+                Находится\\ в области
+                \end{tabular}
+            };
+            \path [connector] (check) -- (if);
+            \mnode{if}{setdrag}{
+                Установка состояние текущего ползунка как \texttt{dragged}\\
+                \texttt{sliders[i].dragged = true}
+            };
+            \mnode{setdrag}{ipl}{\texttt{i = i + 1}};
+            \node[link, below=0.75cm of ipl] (lnk1) {1};
+            \path [connector] (ipl) -- (lnk1);
+            \node[link, left=1.5cm of forcond] (lnk2) {1};
+            \path [connector] (lnk2) -- (forcond);
+
+            \node[link, left=1.5cm of ipl] (lnk3) {2};
+            \path [connector] (lnk3) -- (ipl);
+
+            \node[link, right=1.5cm of if] (lnk4) {2};
+            \path [connector] (if) -- (lnk4);
+
+            \node[draw=none, below right = 1cm and -1cm of if]{Да};
+            \node[draw=none, above right = -1.1cm and 1.1cm of if]{Нет};
+            
+        \end{tikzpicture}
+    \end{center}
+
+    \begin{spacing}{1.5}
+        Функция проверяет каждый ползунок, и, если точка нажатия мыши с координатами \verb|e.x, e.y| находится внутри прямоугольника, заданного как \verb|rect| для каждого ползунка в разделе \hyperref[sec:sliders]{<<Отображение ползунков>>}, то данная функция задает этому ползунку состояние \verb|dragged| как \verb|true|, то есть ползунок сейчас двигается.
+        \par
+        Далее, определена функция \verb|MouseUp|, которая отвечает за события при поднятии кнопки мыши.
+    \end{spacing}
+
+    \begin{lstlisting}
+// inputs.h
+void MouseUp(SDL_MouseButtonEvent e) {
+	for (int i = 0; i < slidersAmount; ++i) {
+		if (sliders[i].dragged)
+			sliders[i].dragged = false;
+	}
+}\end{lstlisting}
+
+    \begin{spacing}{1.5}
+        \noindent
+        Ниже представлена блок схема функции \verb|MouseUp|.
+    \end{spacing}
+
+    \vspace{-0.5em}
+    
+    \begin{center}
+        \begin{tikzpicture}[transform shape, scale=0.7]
+            \node[terminator] at (0, 0) (start) {Начало};
+            \mnode{start}{initi}{
+                Объявление переменной для счетчика\\
+                \texttt{i = 0}
+            };
+            \node[decision, below=0.75 of initi] (forcond) {
+                \texttt{i < slidersAmount}
+            };
+            \path[connector] (initi) -- (forcond);
+            \node[draw=none, above right = -1.2cm and 1.3cm of forcond]{Нет};
+            \node[terminator, right=1.5cm of forcond] (end) {Конец};
+            \path[connector] (forcond) -- (end);
+            \node[draw=none, below right = 1.2cm and -1.2cm of forcond]{Да};
+            \mnode{forcond}{check}{
+                Проверка ползунка на состояние перемещения\\
+                \texttt{sliders[i].dragged}
+            };
+            \node[decision, below=0.75cm of check] (if) {
+                \begin{tabular}
+                \centering
+                Перемещается
+                \end{tabular}
+            };
+            \path [connector] (check) -- (if);
+            \mnode{if}{setdrag}{
+                Сброс состояния \texttt{dragged} текущего ползунка\\
+                \texttt{sliders[i].dragged = false}
+            };
+            \mnode{setdrag}{ipl}{\texttt{i = i + 1}};
+            \node[link, below=0.75cm of ipl] (lnk1) {1};
+            \path [connector] (ipl) -- (lnk1);
+            \node[link, left=1.5cm of forcond] (lnk2) {1};
+            \path [connector] (lnk2) -- (forcond);
+
+            \node[link, left=1.5cm of ipl] (lnk3) {2};
+            \path [connector] (lnk3) -- (ipl);
+
+            \node[link, right=1.5cm of if] (lnk4) {2};
+            \path [connector] (if) -- (lnk4);
+
+            \node[draw=none, below right = 1cm and -1cm of if]{Да};
+            \node[draw=none, above right = -1.1cm and 1.1cm of if]{Нет};
+        \end{tikzpicture}
+    \end{center}
+
+    \begin{spacing}{1.5}
+        В данном методе проверяется, двигается ли каждый ползунок в момент поднятия кнопки мыши с помощью состояния \verb|dragged|, которое задается в функции \verb|MouseDown|. Если же какой-то из ползунков двигается пользователем, то при поднятии кнопки мыши его состояние \verb|dragged| меняется на \verb|false|, то есть движение пользователем заканчивается.
+        \par
+        Далее рассмотрена функция \verb|UpdateSliderValues| из заголовочного файла \verb|sliders.h|.
+    \end{spacing}
+
+    \begin{lstlisting}
+// sliders.h
+void UpdateSliderValues(SDL_MouseMotionEvent e) {
+	for (int i = 0; i < slidersAmount; ++i) {
+		if (sliders[i].dragged) {
+			double progress = InverseLerp(e.x, SLIDER_PADDING, SCREEN_WIDTH - SLIDER_PADDING);
+			*sliders[i].value = Lerp(progress, sliders[i].min, sliders[i].max);
+		}
+	}
+}\end{lstlisting}
+
+    \begin{spacing}{1.5}
+        \noindent
+        Ниже представлена блок схема функции \verb|UpdateSliderValues|.
+    \end{spacing}
+
+    \vspace{-0.5em}
+    
+    \begin{center}
+        \begin{tikzpicture}[transform shape, scale=0.7]
+            \node[terminator] at (0, 0) (start) {Начало};
+            \mnode{start}{initi}{
+                Объявление переменной для счетчика\\
+                \texttt{i = 0}
+            };
+            \node[decision, below=0.75 of initi] (forcond) {
+                \texttt{i < slidersAmount}
+            };
+            \path[connector] (initi) -- (forcond);
+            \node[draw=none, above right = -1.2cm and 1.3cm of forcond]{Нет};
+            \node[terminator, right=1.5cm of forcond] (end) {Конец};
+            \path[connector] (forcond) -- (end);
+            \node[draw=none, below right = 1.2cm and -1.2cm of forcond]{Да};
+            \mnode{forcond}{check}{
+                Проверка ползунка на состояние перемещения\\
+                \texttt{sliders[i].dragged}
+            };
+            \node[decision, below=0.75cm of check] (if) {
+                \begin{tabular}
+                \centering
+                Перемещается
+                \end{tabular}
+            };
+            \path [connector] (check) -- (if);
+            \mnode{if}{setdrag2}{
+                Вычисление нормализованного значения ползунка\\
+                \texttt{progress = InverseLerp(e.x, SLIDER\_PADDING, SCREEN\_WIDTH - SLIDER\_PADDING)}
+            };
+            \mnode{setdrag2}{setdrag}{
+                Вычисление интерполированного значения ползунка\\
+                \texttt{*sliders[i].value = Lerp(progress, sliders[i].min, sliders[i].max)}
+            }
+            \mnode{setdrag}{ipl}{\texttt{i = i + 1}};
+            \node[link, below=0.75cm of ipl] (lnk1) {1};
+            \path [connector] (ipl) -- (lnk1);
+            \node[link, left=1.5cm of forcond] (lnk2) {1};
+            \path [connector] (lnk2) -- (forcond);
+
+            \node[link, left=1.5cm of ipl] (lnk3) {2};
+            \path [connector] (lnk3) -- (ipl);
+
+            \node[link, right=1.5cm of if] (lnk4) {2};
+            \path [connector] (if) -- (lnk4);
+
+            \node[draw=none, below right = 1cm and -1cm of if]{Да};
+            \node[draw=none, above right = -1.1cm and 1.1cm of if]{Нет};
+        \end{tikzpicture}
+    \end{center}
+
+    \begin{spacing}{1.5}
+        В данной функции происходит обновление значения ползунка, которое вычисляется по формуле из раздела \hyperref[sec:minmaxnorm]{<<Минимально-максимальная нормализация>>}, и задается как поле \verb|value| для каждого ползунка из массива \verb|sliders[]|. Причем, обновление значения ползунка происходит только, если ползунок имеет активное состояние \verb|dragged|.
+        \label{sec:eventloop}
+        \par
+        Далее рассмотрена функция \verb|EventLoop|, в которой происходит обработка всех событий типа \verb|SDL_Event|.
+    \end{spacing}
+
+    \begin{lstlisting}
+// inputs.h
+void EventLoop(SDL_Event* e) {
+    while(SDL_PollEvent(e) != 0)
+    {
+    	switch (e->type) {
+    	case SDL_QUIT:
+    		run = false;
+    		break;
+
+    	case SDL_MOUSEBUTTONDOWN:
+    		MouseDown(e->button);
+    		break;
+
+    	case SDL_MOUSEBUTTONUP:
+    		MouseUp(e->button);
+    		break;
+
+    	case SDL_MOUSEMOTION:
+    		UpdateSliderValues(e->motion);
+    		break;
+    	}
+	}
+}\end{lstlisting}
+
+    \begin{spacing}{1.5}
+        \noindent
+        Ниже представлена блок схема функции \verb|EventLoop|.
+    \end{spacing}
+
+    \vspace{-0.5em}
+
+    \begin{center}
+        \begin{tikzpicture}[transform shape, scale=0.7]
+            \node[terminator] at (0, 0) (start) {Начало};
+            \mnode{start}{gete}{
+                Получение события в переменную $e$\\
+                \texttt{SDL\_PollEvent(e)}
+            }
+            \node[decision, below=0.75cm of gete] (wif) {\texttt{e != 0}};
+            \path[connector] (gete) -- (wif);
+            \node[terminator, right=1.5cm of wif] (end) {Конец};
+            \path[connector] (wif) -- (end);
+            \node[draw=none, above right = -0.6cm and 0.7cm of wif] {Нет};
+            \mnode{wif}{switch}{
+                Проверка типа события\\
+                \texttt{switch (e->type)}
+            }
+            \node[draw=none, below right = 0.5cm and -0.5cm of wif]{Да};
+            \node[decision, below=0.75cm of switch] (d1) {\texttt{SDL\_QUIT}};
+            \path[connector] (switch) -- (d1);
+            \node[process, right=1.5cm of d1] (s1) {
+            \begin{tabular}
+                \centering
+                Завершение программы\\
+                \texttt{run = false}
+            \end{tabular}
+            };
+            \path[connector] (d1) -- (s1);
+            \node[decision, below=0.75cm of d1] (d2) {\texttt{SDL\_MOUSEBUTTONDOWN}};
+            \path[connector] (d1) -- (d2);
+            \node[process, right=1.5cm of d2] (s2) {
+            \begin{tabular}
+                \centering
+                Обработка нажатия мыши\\
+                \texttt{MouseDown(e->button)}
+            \end{tabular}
+            };
+            \path[connector] (d2) -- (s2);
+            \node[decision, below=0.75cm of d2] (d3) {\texttt{SDL\_MOUSEBUTTONUP}};
+            \path[connector] (d2) -- (d3);
+            \node[process, right=1.5cm of d3] (s3) {
+            \begin{tabular}
+                \centering
+                Обработка поднятия мыши\\
+                \texttt{MouseUp(e->button)}
+            \end{tabular}
+            };
+            \path[connector] (d3) -- (s3);
+            \node[decision, below=0.75cm of d3] (d4) {\texttt{SDL\_MOUSEMOTION}};
+            \path[connector] (d3) -- (d4);
+            \node[process, right=1.5cm of d4] (s4) {
+            \begin{tabular}
+                \centering
+                Обработка движения мыши\\
+                \texttt{UpdateSliderValues(e->motion)}
+            \end{tabular}
+            };
+            \path[connector] (d4) -- (s4);
+            \node[link, below=0.75cm of d4] (lnk1) {1};
+            \path[connector] (d4) -- (lnk1);
+            \node[link, left=1.5cm of gete] (lnk2) {1};
+            \path[connector] (lnk2) -- (gete);
+            
+        \end{tikzpicture}
+    \end{center}
+
+    \begin{spacing}{1.5}
+        Данная функция проверяет все события с помощью цикла \verb|while|, получая их из функции \verb|SDL_PollEvent|. Далее, в зависимости от типа события \verb|e->type|, принимается какое-либо действие. В случае выхода из программы \verb|SDL_QUIT|, переменная \verb|run| устанавливается на \verb|false|, таким образом, программа закрывается. При случае \verb|SDL_MOUSEBUTTONDOWN|, который вызывается при нажатии на кнопки мыши, вызывается описанная ранее функция \verb|MouseDown|, причем в качестве аргумента передается информация о событии мыши \verb|e->button|, хранящий такую информацию, как \verb|x| и \verb|y| координаты нажатия. В случае события \verb|SDL_MOUSEBUTTONUP|, которое вызывается при поднятии кнопки мыши, вызывается функция \verb|MouseUp| описанная ранее, в которую также передается информация о мыши в качестве аргумента. В случае события движения мыши, вызывается метод \verb|UpdateSliderValues|, но туда передается информация о движении мыши \verb|e->motion|.
+    \end{spacing}
+    \par
+
+    {
+        \par
+        \subsection{Отображение текста}
+        \label{sec:text}
+        \par
+    }
+
+    \begin{spacing}{1.5}
+        Для отрисовки текста необходимо подключить библиотеку \textit{SDL\_ttf.h}, а также проинициализировать ее и загрузить шрифт, что было реализовано в функции \verb|InitSDL| файла \verb|main.c| и описано в разделе \hyperref[sec:init]{<<Создание графического окна>>}. В заголовочном файле, отвечающем за текст, подключены необходимые библиотеки и заголовочный файл с константами \verb|constants.h|.
+    \end{spacing}
+
+    \begin{lstlisting}
+#include "SDL2/SDL.h"
+#include "SDL2/SDL_ttf.h"
+#include "constants.h"\end{lstlisting}
+
+    \begin{spacing}{1.5}
+        Далее, для удобства, была создана структура \verb|Text|, содержащая все параметры, необходимые для отрисовки текста.
+    \end{spacing}
+
+    \begin{lstlisting}
+typedef struct {
+	const char* text;
+	const int x;
+	const int y;
+	SDL_Color color;
+	SDL_Texture* texture;
+	SDL_Rect rect;
+} Text;\end{lstlisting}
+
+    \begin{spacing}{1.5}
+        Далее создается переменная типа \verb|TTF_Font|, куда из функции \verb|InitSDL|, описанной ранее, загружается подключенный шрифт. Также, создается массив типа \verb|Text[]|, в котором будут храниться все тексты для отображения, и создана переменная-счетчик количества отображаемого текста \verb|textsAmount|.
+    \end{spacing}
+
+    \begin{lstlisting}
+TTF_Font* font;
+Text texts[] = {
+	{"Курсовая работа №1, вар. 3.23", SCREEN_WIDTH / 2, 50, (SDL_Color){0xff, 0xff, 0xff, 0xff}},
+	{"Радиус", SCREEN_WIDTH / 2, SCREEN_HEIGHT - 25, (SDL_Color){0xff, 0xff, 0xff, 0xff}},
+	{"Скорость вращения", SCREEN_WIDTH / 2, SCREEN_HEIGHT - 75, (SDL_Color){0xff, 0xff, 0xff, 0xff}}
+};
+int textsAmount = 3;\end{lstlisting}
+
+    \label{sec:createfonts}
+    \begin{spacing}{1.5}
+        Далее определяется функция \verb|CreateFontTextures|, которая создает и задает текстуры для каждого из отображаемых текстов.
+    \end{spacing}
+    \begin{lstlisting}
+void CreateFontTextures(SDL_Renderer* renderer) {
+	for (int i = 0; i < textsAmount; ++i) {
+		SDL_Surface* text = TTF_RenderUTF8_Solid(font, texts[i].text, texts[i].color);
+		SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, text);
+		texts[i].texture = texture;
+		int w, h;
+		SDL_QueryTexture(texture, NULL, NULL, &w, &h);
+		SDL_Rect rect = {texts[i].x - w / 2, texts[i].y - h / 2, w, h};
+		texts[i].rect = rect;
+	}
+}\end{lstlisting}
+
+    \begin{spacing}{1.5}
+        \noindent
+        Ниже представлена блок схема функции \verb|CreateFontTextures|.
+    \end{spacing}
+
+    \vspace{-0.5em}
+
+    \begin{center}
+        \begin{tikzpicture}[transform shape, scale=0.7]
+            \node[terminator] at (0, 0) (start) {Начало};
+            \mnode{start}{initi}{
+                Объявление переменной для счетчика\\
+                \texttt{i = 0}
+            };
+            \node[decision, below=0.75 of initi] (forcond) {
+                \texttt{i < textsAmount}
+            };
+            \path[connector] (initi) -- (forcond);
+            \node[draw=none, above right = -1.2cm and 1.3cm of forcond]{Нет};
+            \node[terminator, right=1.5cm of forcond] (end) {Конец};
+            \path[connector] (forcond) -- (end);
+            \node[draw=none, below right = 1.2cm and -1.2cm of forcond]{Да};
+            \mnode{forcond}{crsurf}{
+                Создание поверхности с текстом\\
+                \texttt{text = TTF\_RenderUTF8\_Solid(font,}\\
+                \texttt{texts[i].text, texts[i].color)}
+            }
+            \mnode{crsurf}{crtex}{
+                Создание текстуры из поверхности\\
+                \texttt{texture = SDL\_CreateTextureFromSurface(}\\
+                \texttt{renderer, text)}
+            }
+            \mnode{crtex}{settex}{
+                Установка ссылки на текстуру для текста\\
+                \texttt{texts[i].texture = texture}
+            }
+            \mnode{settex}{initwh}{
+                Объявление переменных для ширины и высоты текста\\
+                \texttt{int w, h}
+            }
+            \mnode{initwh}{qry}{
+                Получение ширины и высоты текста в переменные \texttt{w, h}\\
+                \texttt{SDL\_QueryTexture(texture, NULL, NULL, \&w, \&h)}
+            }
+            \mnode{qry}{crect}{
+                Вычисление области отображения текста по центру\\
+                \texttt{rect = {\{texts[i].x - w / 2, texts[i].y - h / 2, w, h\}}}
+            }
+            \mnode{crect}{srect}{
+                Установка ссылки на области отображения для текста\\
+                \texttt{texts[i].rect = rect}
+            }
+            \mnode{srect}{ipl}{\texttt{i = i + 1}}
+            \node[link, below=0.75cm of ipl] (lnk1) {1};
+            \path[connector] (ipl) -- (lnk1);
+            \node[link, left=1.5cm of forcond] (lnk2) {1};
+            \path[connector] (lnk2) -- (forcond);
+        \end{tikzpicture}
+    \end{center}
+
+    \begin{spacing}{1.5}
+        Сначала создается поверхность \verb|SDL_Surface| с текстом \verb|text| с помощью функции \verb|SDL_RenderUTF8_Solid|, используя поля из структуры \verb|Text| для данного текста. Далее эта поверхность конвертируется в текстуру с помощью функции \verb|SDL_CreateTextureFromSurface| и задается в соответственное поле структуры \verb|Text.texture|. Далее определяется ширина и высота созданного текста с помощью функции \verb|SDL_QueryTexture|, куда передается указатель на переменные ширины и высоты \verb|&w|, \verb|&h|. Создается прямоугольная область \verb|SDL_Rect|, откуда берется положение текста на экране. Туда передается \verb|x|, \verb|y| координаты текста, а также его ширина и высота. Для визуального центрирования текста относительно заданных в структуре \verb|Text| координат \verb|x| и \verb|y|, из их положения вычитается половина ширины и высоты отрисованного текста соответственно. Ширина и высота передается без изменений, а созданная область задается в поле \verb|Text.rect|.
+        \par
+        Далее рассмотрена функция \verb|RenderTexts|, которая отрисовывает все созданные тексты на экране.
+    \end{spacing}
+
+    \begin{lstlisting}
+void RenderTexts(SDL_Renderer* renderer) {
+	for (int i = 0; i < textsAmount; ++i) {
+		SDL_RenderCopy(renderer, texts[i].texture, NULL, &texts[i].rect);
+	}
+}\end{lstlisting}
+
+    \begin{spacing}{1.5}
+        \noindent
+        Ниже представлена блок схема функции \verb|RenderTexts|.
+    \end{spacing}
+
+    \vspace{-0.5em}
+    
+    \begin{center}
+        \begin{tikzpicture}[transform shape, scale=0.7]
+            \node[terminator] at (0, 0) (start) {Начало};
+            \mnode{start}{initi}{
+                Объявление переменной для счетчика\\
+                \texttt{i = 0}
+            };
+            \node[decision, below=0.75 of initi] (forcond) {
+                \texttt{i < textsAmount}
+            };
+            \path[connector] (initi) -- (forcond);
+            \node[draw=none, above right = -1.2cm and 1.3cm of forcond]{Нет};
+            \node[terminator, right=1.5cm of forcond] (end) {Конец};
+            \path[connector] (forcond) -- (end);
+            \node[draw=none, below right = 1.2cm and -1.2cm of forcond]{Да};
+            \mnode{forcond}{check}{
+                Отрисовка текста на экране\\
+                \texttt{SDL\_RenderCopy(renderer, texts[i].texture,}\\
+                \texttt{NULL, \&texts[i].rect)}
+            };
+            \mnode{check}{ipl}{\texttt{i = i + 1}}
+            \node[link, below=0.75cm of ipl] (lnk1) {1};
+            \path[connector] (ipl) -- (lnk1);
+            \node[link, left=1.5cm of forcond] (lnk2) {1};
+            \path[connector] (lnk2) -- (forcond);
+        \end{tikzpicture}
+    \end{center}
+
+    \begin{spacing}{1.5}
+        Так как все тексты отрисованы в текстуры, их остается лишь отобразить на экране в необходимый момент. Отображение текстуры на экран производится с помощью функции \verb|SDL_RenderCopy|, куда необходимо передать отрисовщик типа \verb|SDL_Renderer|, текстуру для отрисовки, которая в нашем случае хранится в поле \verb|Text.texture|, а также прямоугольную область текстуры, которая находится в поле \verb|Text.rect|.
+    \end{spacing}
+    
+    \par    
+    \vfill
+    \newpage
+}
+
+{
+    {
+        \par
+        \centering\section{ВЫВОД}
+        \par
+    }
+
+    \begin{spacing}{1.5}
+        В ходе данной курсовой работы был изучен принцип создания программ с графическим интерфейсом на языке \textit{C} с использованием библиотеки \textit{SDL2}. Была разработана программа для отображения на экране компьютера вращающегося равностороннего треугольника. Предусмотрена возможность изменения скорости вращения треугольника, а также его размеров, что реализовано с помощью управления ползунками, что является простым, удобным и интуитивно понятным для пользоваля интерфейсом.
+    \end{spacing}
+    
+    \par
+    \vfill
+    \newpage
+}
+
+{
+    {
+        \par
+        \centering\section{СПИСОК ИСПОЛЬЗУЕМОЙ ЛИТЕРАТУРЫ}
+        \par
+    }
+
+    \begin{enumerate}
+        \item{
+            Документация SDL2 /  [Электронный ресурс] // SDL2 Wiki : [сайт]. — URL: \url{https://wiki.libsdl.org/SDL2/FrontPage} (дата обращения: 20.05.2024).
+        }
+        \item{
+            Обучающие пособия SDL2 /  [Электронный ресурс] // Lazy Foo' Productions : [сайт]. — URL: \url{https://www.lazyfoo.net/tutorials/SDL/} (дата обращения: 20.05.2024).
+        }
+        \item{
+            Исходный код SDL2 /  [Электронный ресурс] // GitHub : [сайт]. — URL: \url{https://github.com/libsdl-org/SDL/tree/SDL2} (дата обращения: 20.05.2024).
+        }
+        \item{
+            Исходный код SDL\_ttf /  [Электронный ресурс] // GitHub : [сайт]. — URL: \url{https://github.com/libsdl-org/SDL_ttf} (дата обращения: 20.05.2024).
+        }
+    \end{enumerate}
+
+    \par
+    \vfill
+    \newpage
+}
+
+{
+    {
+        \par
+        \centering\section{ПРИЛОЖЕНИЕ А}
+        \par
+    }
+    \par
+    {
+        \par
+        \centering
+        \textbf{
+            Репозиторий с исходным кодом программы на GitHub.
+        }
+        \par
+    }
+    \par
+
+    \vspace{2em}
+    \noindent\url{https://github.com/Broyler/Term1Paper/}
+
+    \par
+    \vfill
+    \newpage
+}
+
+{
+    {
+        \par
+        \centering\section{ПРИЛОЖЕНИЕ Б}
+        \par
+    }
+    \par
+    {
+        \par
+        \centering
+        \textbf{
+            Снимок экрана работы программы
+        }
+        \par
+    }
+    \par
+
+    \vspace{2em}
+    \noindent
+    \centering
+    \includegraphics[width=1\textwidth]{program.png}
+
+    \par
+    \vfill
+    \newpage
+}
+
+{
+    {
+        \par
+        \centering\section{ПРИЛОЖЕНИЕ В}
+        \par
+    }
+    \par
+    {
+        \par
+        \centering
+        \textbf{
+            Снимок экрана работы программы
+        }
+        \par
+    }
+    \par
+
+    \vspace{2em}
+    \noindent
+    \centering
+    \includegraphics[width=1\textwidth]{program2.png}
+
+    \par
+    \vfill
+    \newpage
+}
+
+{
+    {
+        \par
+        \centering\section{ПРИЛОЖЕНИЕ Г}
+        \par
+    }
+    \par
+    {
+        \par
+        \centering
+        \textbf{
+            Исходный код файла main.c
+        }
+        \par
+    }
+    \par
+    \vspace{1em}
+
+    \lstinputlisting{main.c}
+
+    \par
+    \vfill
+    \newpage
+}
+
+{
+    {
+        \par
+        \centering\section{ПРИЛОЖЕНИЕ Д}
+        \par
+    }
+    \par
+    {
+        \par
+        \centering
+        \textbf{
+            Исходный код заголовочного файла triangle.h
+        }
+        \par
+    }
+    \par
+    \vspace{1em}
+
+    \lstinputlisting{triangle.h}
+
+    \par
+    \vfill
+    \newpage
+}
+
+{
+    {
+        \par
+        \centering\section{ПРИЛОЖЕНИЕ Е}
+        \par
+    }
+    \par
+    {
+        \par
+        \centering
+        \textbf{
+            Исходный код заголовочного файла constants.h
+        }
+        \par
+    }
+    \par
+    \vspace{1em}
+
+    \lstinputlisting{constants.h}
+
+    \par
+    \vfill
+    \newpage
+}
+
+{
+    {
+        \par
+        \centering\section{ПРИЛОЖЕНИЕ Ж}
+        \par
+    }
+    \par
+    {
+        \par
+        \centering
+        \textbf{
+            Исходный код заголовочного файла calculations.h
+        }
+        \par
+    }
+    \par
+    \vspace{1em}
+
+    \lstinputlisting{calculations.h}
+
+    \par
+    \vfill
+    \newpage
+}
+
+{
+    {
+        \par
+        \centering\section{ПРИЛОЖЕНИЕ И}
+        \par
+    }
+    \par
+    {
+        \par
+        \centering
+        \textbf{
+            Исходный код заголовочного файла inputs.h
+        }
+        \par
+    }
+    \par
+    \vspace{1em}
+
+    \lstinputlisting{inputs.h}
+
+    \par
+    \vfill
+    \newpage
+}
+
+{
+    {
+        \par
+        \centering\section{ПРИЛОЖЕНИЕ К}
+        \par
+    }
+    \par
+    {
+        \par
+        \centering
+        \textbf{
+            Исходный код заголовочного файла sliders.h
+        }
+        \par
+    }
+    \par
+    \vspace{1em}
+
+    \lstinputlisting{sliders.h}
+
+    \par
+    \vfill
+    \newpage
+}
+
+{
+    {
+        \par
+        \centering\section{ПРИЛОЖЕНИЕ Л}
+        \par
+    }
+    \par
+    {
+        \par
+        \centering
+        \textbf{
+            Исходный код заголовочного файла texts.h
+        }
+        \par
+    }
+    \par
+    \vspace{1em}
+
+    \lstinputlisting{texts.h}
+
+    \par
+    \vfill
+    \newpage
+}
+
+
+
+\end{document}
